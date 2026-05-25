@@ -498,7 +498,7 @@ void ShadowMap::GetCurrentPVMatrix(){
   C=vcg::Transpose( C );
 
   Matrix44f P = C*B;
-  P=vcg::Invert( P );
+  P=vcg::Inverse( P );
   Matrix44f res =  A*P;
   
   Matrix44f mul;
