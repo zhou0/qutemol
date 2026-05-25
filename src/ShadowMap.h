@@ -14,7 +14,7 @@ public:
   
   
   // adapt to current PVMatrix
-  static void ShadowMap::GetCurrentPVMatrix();
+  static void GetCurrentPVMatrix();
   
   // feed parametmers to FP
   static void FeedParameters();
