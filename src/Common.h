@@ -1,3 +1,4 @@
+#include <vector>
 extern int winx, winy;
 
 typedef unsigned char Byte;

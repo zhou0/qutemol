@@ -1,3 +1,4 @@
+#include <cstdio>
 typedef unsigned char Byte;
 typedef unsigned int uint;
  

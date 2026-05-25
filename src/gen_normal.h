@@ -1,3 +1,6 @@
+#include <vcg/space/point3.h>
+using namespace vcg;
+#include <vector>
 /****************************************************************************
 * VCGLib                                                            o o     *
 * Visual and Computer Graphics Library                            o     o   *

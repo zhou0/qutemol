@@ -1,3 +1,4 @@
+#include <cstdio>
 //#include <SDL/SDL.h>
 
 typedef unsigned char Byte;

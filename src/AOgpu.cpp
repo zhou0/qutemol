@@ -1,3 +1,4 @@
+#include <cstdio>
 typedef unsigned char Byte;
 
 #include <GL/glew.h>

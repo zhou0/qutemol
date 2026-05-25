@@ -1,4 +1,5 @@
 
+#include <cstdio>
 typedef unsigned char Byte;
 
 #include <math.h>

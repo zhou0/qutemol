@@ -1,3 +1,5 @@
+#include <vcg/space/point3.h>
+using namespace vcg;
 
 extern bool validView(Point3f p);
 

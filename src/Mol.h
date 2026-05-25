@@ -1,3 +1,10 @@
+#include <string>
+#include <vector>
+#include <vcg/space/point3.h>
+#include <vcg/space/color4.h>
+
+using namespace std;
+using namespace vcg;
 
 class MyString{
 public:

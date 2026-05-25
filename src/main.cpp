@@ -1,3 +1,4 @@
+#include <cstdio>
 //
 // qutemol on wxWidgets MAIN 
 //
