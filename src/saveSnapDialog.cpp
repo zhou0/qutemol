@@ -3,7 +3,7 @@
 #endif
 
 #include <vector>
-#include "SaveSnapDialog.h"
+#include "saveSnapDialog.h"
 #include "HardSettings.h"
 
 

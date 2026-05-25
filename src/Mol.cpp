@@ -17,7 +17,7 @@ using namespace std;
 #include "Mol.h"
 #include "HardSettings.h"
 
-#include "Progress.h"
+#include "progress.h"
 #include "AtomColor.h"
 
 #include "MyCanvas.h"
