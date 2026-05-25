@@ -92,11 +92,17 @@ endif()
 # Add trackball files from VCG if they exist
 # These files are typically needed and are part of the VCG library wrappers
 if(VCG_PATH)
+    # Check common locations for trackball.cpp and trackmode.cpp in vcglib
     if(EXISTS "${VCG_PATH}/wrap/gui/trackball.cpp")
         list(APPEND SOURCES "${VCG_PATH}/wrap/gui/trackball.cpp")
+    elseif(EXISTS "${VCG_PATH}/vcg/wrap/gui/trackball.cpp")
+        list(APPEND SOURCES "${VCG_PATH}/vcg/wrap/gui/trackball.cpp")
     endif()
+
     if(EXISTS "${VCG_PATH}/wrap/gui/trackmode.cpp")
         list(APPEND SOURCES "${VCG_PATH}/wrap/gui/trackmode.cpp")
+    elseif(EXISTS "${VCG_PATH}/vcg/wrap/gui/trackmode.cpp")
+        list(APPEND SOURCES "${VCG_PATH}/vcg/wrap/gui/trackmode.cpp")
     endif()
 endif()
 
