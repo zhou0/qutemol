@@ -1,0 +1,303 @@
+# Instincts generated from https://github.com/zhou0/qutemol
+# Generated: 2026-05-25T11:16:31.163Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: qutemol-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/zhou0/qutemol
+---
+
+# Qutemol Commit Length
+
+## Action
+
+Write moderate-length commit messages (~55 characters)
+
+## Evidence
+
+- Average commit message length: 55 chars
+- Based on 3 commits
+
+---
+id: qutemol-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/zhou0/qutemol
+---
+
+# Qutemol Naming Files
+
+## Action
+
+Use PascalCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: PascalCase
+
+---
+id: qutemol-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/zhou0/qutemol
+---
+
+# Qutemol Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: qutemol-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/zhou0/qutemol
+---
+
+# Qutemol Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: qutemol-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/zhou0/qutemol
+---
+
+# Qutemol Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: qutemol-workflow-update-build-system-and-ci
+trigger: "when doing update build system and ci"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/zhou0/qutemol
+---
+
+# Qutemol Workflow Update Build System And Ci
+
+## Action
+
+Follow the update-build-system-and-ci workflow:
+1. Modify CMakeLists.txt to update build instructions or dependencies.
+2. Update .github/workflows/cmake-multi-platform.yml to reflect changes in build requirements or CI steps.
+3. Test CI to ensure builds succeed on all platforms.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: CMakeLists.txt, .github/workflows/cmake-multi-platform.yml
+
+---
+id: qutemol-instinct-file-naming
+trigger: "When creating or renaming a file in the codebase"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct File Naming
+
+## Action
+
+Name the file using PascalCase (e.g., MyFile.ts)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+
+---
+id: qutemol-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Function Naming
+
+## Action
+
+Name the function using camelCase (e.g., myFunction)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: qutemol-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase (e.g., MyClass)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: qutemol-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., MY_CONSTANT)
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: qutemol-instinct-import-style
+trigger: "When importing modules in TypeScript files"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Import Style
+
+## Action
+
+Use relative import paths (e.g., import { X } from './module')
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: qutemol-instinct-export-style
+trigger: "When exporting from a module"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Export Style
+
+## Action
+
+Use named exports (e.g., export { MyFunction })
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: qutemol-instinct-test-location
+trigger: "When adding new tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Test Location
+
+## Action
+
+Place test files in a separate test folder, not mixed with source files
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
+---
+id: qutemol-instinct-commit-format
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Commit Format
+
+## Action
+
+Write a concise, imperative message without a prefix (e.g., 'Fix CI by installing dependencies')
+
+## Evidence
+
+- Pattern in commits.examples
+- No prefixes in commit messages
+
+---
+id: qutemol-instinct-update-build-system-ci
+trigger: "When someone updates build dependencies, build scripts, or needs to fix CI issues related to building the project"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: zhou0/qutemol
+---
+
+# Qutemol Instinct Update Build System Ci
+
+## Action
+
+Update CMakeLists.txt and .github/workflows/cmake-multi-platform.yml in sync, then test CI on all platforms
+
+## Evidence
+
+- Workflow 'update-build-system-and-ci'
+- Commits modifying both CMakeLists.txt and .github/workflows/cmake-multi-platform.yml
+
