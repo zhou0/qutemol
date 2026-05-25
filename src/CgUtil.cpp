@@ -1,7 +1,7 @@
 #include <cstdio>
+#include <GL/glew.h>
 #include <GL/glu.h>
 
-#include <GL/glew.h>
 #include "CgUtil.h"
 
 #if defined(_WIN32)

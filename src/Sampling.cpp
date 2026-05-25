@@ -1,9 +1,9 @@
 #include <cstdio>
+#include <GL/glew.h>
 #include <GL/glu.h>
 
 typedef unsigned char Byte;
 
-#include <GL/glew.h>
 #include "CgUtil.h"
 
 //#include <GL/gl.h>
