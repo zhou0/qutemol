@@ -825,7 +825,7 @@ Point3f getDirFromTrackball(vcg::Trackball &tb){
   tb.radius= 1;
   
 	tb.GetView();
-  tb.Apply(false);
+  tb.Apply();
 
   float pos[4]={0.0f,0.0f,-1.0f,0.0f};
   float d[16];
@@ -843,7 +843,7 @@ void drawLightDir()
 {
 	glPushMatrix();
 	lightTrack.GetView();
-  lightTrack.Apply(false);
+  lightTrack.Apply();
 #if 0
     glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
 	glColor3f(1,1,0);
@@ -956,7 +956,7 @@ void drawFrame() {
     
     setProjection( mainCanvas.GetVideoSize() );
     track.GetView();
-    track.Apply(false);
+    track.Apply();
     setProjection( mainCanvas.GetSoftRes() );
     
     
