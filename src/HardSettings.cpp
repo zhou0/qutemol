@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #if defined(_WIN32)
-#include <strings.h>
+#include <string.h>
 #else
 #include <string.h> // for strcmp
 #endif

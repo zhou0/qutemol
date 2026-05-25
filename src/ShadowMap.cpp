@@ -1,4 +1,7 @@
 #include <cstdio>
+#include <GL/glu.h>
+
+
 //#include <SDL/SDL.h>
 
 typedef unsigned char Byte;
@@ -9,7 +12,8 @@ typedef unsigned int uint;
 
 //#include <GL/gl.h>
 #include <math.h>
-//#include <GL/glu.h>
+
+
 
 #include <vector>
 

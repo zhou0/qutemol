@@ -42,12 +42,12 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libwxgtk3.2-dev libglew-dev libpng-dev libgif-dev zlib1g-dev
+        sudo apt-get install -y libwxgtk3.2-dev libglew-dev libpng-dev libgif-dev zlib1g-dev libeigen3-dev libglu1-mesa-dev
 
     - name: Install dependencies (Windows)
       if: runner.os == 'Windows'
       run: |
-        vcpkg install wxwidgets glew libpng freeglut zlib giflib
+        vcpkg install wxwidgets glew libpng freeglut zlib giflib eigen3
 
     - name: Clone vcglib
       run: |

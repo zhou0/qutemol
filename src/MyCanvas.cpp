@@ -29,6 +29,7 @@ bool MyCanvas::SetAsOutput(){
 
 bool MyCanvas::SetAsTexture(){
   glBindTexture( GL_TEXTURE_2D, textureID[ currentRes ] );
+  return true;
 }
   
 MyCanvas::MyCanvas(Kind k, int size){

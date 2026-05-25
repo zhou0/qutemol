@@ -1,4 +1,7 @@
 #include <cstdio>
+#include <GL/glu.h>
+
+
 typedef unsigned char Byte;
 
 #include <GL/glew.h>
@@ -6,7 +9,8 @@ typedef unsigned char Byte;
 
 //#include <GL/gl.h>
 #include <math.h>
-//#include <GL/glu.h>
+
+
 
 #include <vector>
 
@@ -74,7 +78,7 @@ void AOgpu::OpenGLSnap()
 AOgpu::AOgpu( Point3f _dir, Mol &m) {
  
   int out=hardSettings.TSIZE*hardSettings.TSIZE;
-  glClearColor((out&&255)/255.0 , ((out>>8)&&255)/255.0, (out>>16)/255.0, 0    );
+  glClearColor((out&255)/255.0 , ((out>>8)&255)/255.0, (out>>16)/255.0, 0    );
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   dir=_dir.Normalize();
   

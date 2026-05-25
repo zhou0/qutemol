@@ -5,13 +5,12 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # VCG Library
-# QuteMol depends on vcglib. It expects the 'vcg' directory to be available.
 set(VCG_PATH "" CACHE PATH "Path to vcglib")
 if(NOT VCG_PATH)
     if(EXISTS "${CMAKE_SOURCE_DIR}/vcg")
         set(VCG_PATH "${CMAKE_SOURCE_DIR}/vcg")
     else()
-        message(WARNING "VCG_PATH not set and 'vcg' directory not found in project root. VCG is required for building. You can provide it by setting -DVCG_PATH=/path/to/vcglib")
+        message(WARNING "VCG_PATH not set and 'vcg' directory not found in project root. VCG is required for building.")
     endif()
 endif()
 
@@ -40,6 +39,9 @@ include_directories(${GIF_INCLUDE_DIR})
 find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIRS})
 
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIRS})
+
 # Source files
 set(SOURCES
     src/AO.cpp
@@ -61,7 +63,7 @@ set(SOURCES
     src/wx_trackball.cpp
 )
 
-# Headers (optional, but good for IDEs)
+# Headers
 set(HEADERS
     src/AO.h
     src/AOgpu.h
@@ -83,16 +85,13 @@ set(HEADERS
 )
 
 if(WIN32)
-    # Resource file for Windows
     if(EXISTS "${CMAKE_SOURCE_DIR}/src/main.rc")
         list(APPEND SOURCES src/main.rc)
     endif()
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-# Add trackball files from VCG if they exist
-# These files are typically needed and are part of the VCG library wrappers
 if(VCG_PATH)
-    # Check common locations for trackball.cpp and trackmode.cpp in vcglib
     if(EXISTS "${VCG_PATH}/wrap/gui/trackball.cpp")
         list(APPEND SOURCES "${VCG_PATH}/wrap/gui/trackball.cpp")
     elseif(EXISTS "${VCG_PATH}/vcg/wrap/gui/trackball.cpp")
@@ -115,6 +114,7 @@ target_link_libraries(qutemol
     ${PNG_LIBRARIES}
     ${GIF_LIBRARIES}
     ${ZLIB_LIBRARIES}
+    Eigen3::Eigen
 )
 
 # Installation

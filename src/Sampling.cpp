@@ -1,3 +1,6 @@
+#include <cstdio>
+#include <GL/glu.h>
+
 typedef unsigned char Byte;
 
 #include <GL/glew.h>
@@ -5,7 +8,8 @@ typedef unsigned char Byte;
 
 //#include <GL/gl.h>
 #include <math.h>
-//#include <GL/glu.h>
+
+
 
 #include <vector>
 

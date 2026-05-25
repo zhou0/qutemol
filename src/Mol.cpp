@@ -301,7 +301,7 @@ void Mol::FindBonds(){
     
   
   if (showprogress) EndProgress();
-  printf("%d bonds detected!\n",bond.size() );
+  printf("%zd bonds detected!\n", (size_t)bond.size() );
 }
 
 void Mol::SetSpaceFill(){
