@@ -412,7 +412,7 @@ bool MyApp::OnInit()
     sizer->Add(frame->GetToolbar(),      0, wxGROW);
     frame->SetSizer(sizer);
 
-    int tbsize=frame->GetToolbar()->GetBestFittingSize().x;
+    int tbsize=frame->GetToolbar()->GetEffectiveMinSize().x;
     frame->GetToolbar()->SetSize(tbsize,winy);
     frame->GetToolbar()->Layout();
    
@@ -562,7 +562,7 @@ void MyFrame::OnSize(wxSizeEvent& event){
     wxFrame::OnSize(event);
     /*
     GetClientSize(&w,&h);    
-    int tbsize=GetToolbar()->GetBestFittingSize().x;
+    int tbsize=GetToolbar()->GetEffectiveMinSize().x;
     winx=w-tbsize;
     winy=h;
     
@@ -577,7 +577,7 @@ void MyFrame::OnSize(wxSizeEvent& event){
   static int oldw=0,oldh=0;
 
   
-  int w1=m_tb->GetBestFittingSize().x;
+  int w1=m_tb->GetEffectiveMinSize().x;
   //
 
   int sx=w-w1, sy=h , s;
