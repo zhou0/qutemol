@@ -40,7 +40,6 @@ find_package(ZLIB REQUIRED)
 include_directories(${ZLIB_INCLUDE_DIRS})
 
 find_package(Eigen3 REQUIRED)
-    src/pngSave.h
 include_directories(${EIGEN3_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIRS})
 
 # Source files
@@ -66,6 +65,7 @@ set(SOURCES
 
 # Headers
 set(HEADERS
+    src/pngSave.h
     src/AO.h
     src/AOgpu.h
     src/AtomColor.h
