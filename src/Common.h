@@ -57,6 +57,8 @@ void ChangeColorSchema(int i=-1);
 
 Byte* GetSnapshot(int sx, int sy, bool alpha);
 
+void UpdateShadowmap();
 extern CgUtil shadowSettings;
+extern CgUtil shadowSettingsAcc;
 
 #endif
