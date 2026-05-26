@@ -539,7 +539,7 @@ void MyFrame::OnSize(wxSizeEvent& event){
     //m_canvas->;
     //m_tb->;
     resize_mode=NATURAL;
-    wxFrame::OnSize(event);
+    // removed;
     //m_tb->Fit();
     //m_tb->GetSizer()->RecalcSizes();
     //GetSizer()->RecalcSizes();
@@ -552,7 +552,7 @@ void MyFrame::OnSize(wxSizeEvent& event){
 //    Fit();
   } else
   if (resize_mode==NATURAL ) {
-    wxFrame::OnSize(event);
+    // removed;
     /*
     GetClientSize(&w,&h);
     int tbsize=GetToolbar()->GetEffectiveMinSize().x;
@@ -620,11 +620,14 @@ TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
 {
   initdone=false;
   m_context = new wxGLContext(this);
+  m_context = new wxGLContext(this);
+  m_context = new wxGLContext(this);
   shownHQ=false;
 }
 
 TestGLCanvas::~TestGLCanvas()
 {
+  delete m_context;
   delete m_context;
 }
 
@@ -712,7 +715,7 @@ void TestGLCanvas::OnSize(wxSizeEvent& event)
 
 void MyFrame::OnEraseBackground(wxEraseEvent& event)
 {
-  wxFrame::OnEraseBackground(event);
+  // // removed;
     /* Do nothing, to avoid flashing on MSW */
 }
 
