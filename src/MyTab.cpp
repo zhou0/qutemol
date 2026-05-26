@@ -1304,7 +1304,7 @@ Right Mouse Button: move Light\n\
     sizerC->Add(bitmap, 0, wxALIGN_BOTTOM);
     sizerC->Add(1,1,1);
     sizerC->Add(new wxStaticText(this, wxID_ANY,
-         _T("ver 0.4.1 ("__DATE__")") 
+         _T("ver 0.4.1 (") _T(__DATE__) _T(")")
        ),0, wxALIGN_BOTTOM|wxALL,10);
     
     wxSizer *sizer = new wxBoxSizer(wxVERTICAL);

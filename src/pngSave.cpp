@@ -12,10 +12,11 @@
 #include <iostream>
 #include <png.h>
 #include "progress.h"
+#include "pngSave.h"
 
 using namespace std;
 
-typedef unsigned char Byte;
+extern "C" {
 
 void downsample2x2(unsigned char * data, int sx, int sy){
   int j=0;
@@ -98,3 +99,5 @@ bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
 bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse) {
   return savePNG(filename, (Byte*)data, sx, sy, true);
 }
+
+} // extern "C"
