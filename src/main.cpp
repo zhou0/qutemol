@@ -113,7 +113,6 @@ wxStopWatch sw;
 #include "gifSave.h"
 
 // defined in pngSave
-#include "pngSave.h"
 
 
 

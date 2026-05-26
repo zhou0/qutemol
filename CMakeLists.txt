@@ -65,7 +65,6 @@ set(SOURCES
 
 # Headers
 set(HEADERS
-    src/pngSave.h
     src/AO.h
     src/AOgpu.h
     src/AtomColor.h

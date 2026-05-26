@@ -8,7 +8,6 @@
 #include <GL/glu.h>
 
 #include <vector>
-
 extern int winx, winy;
 
 typedef unsigned char Byte;
@@ -27,17 +26,53 @@ class GeoSettings;
 extern CgUtil cgSettings;
 extern GeoSettings geoSettings; // singleton
 
+extern bool bilinear;
+extern bool MovingLightMode;
 
-void ResetAll();
-void UpdateNormalMaps();
+extern bool draw_balls; // just to test
+extern bool draw_sticks; // just to test
+extern bool draw_wireframe_sticks;
+extern bool draw_wireframe_balls;
 
-void UpdateAtomColor();
+extern bool use_accurate_halo;
 
-void StartAO();
-void StopAO();
+void setAniStep(double step);
+void stopAni();
 
-void RebuildMol();
+int InitQuteMol(const char * filename);
 
+#define ERRGL_OK 0
+#define ERRGL_NO_FS 1
+#define ERRGL_NO_VS 2
+#define ERRGL_NO_FBO_SHADOWMAP 4
+#define ERRGL_NO_FBO_HALO 8
+#define ERRGL_NO_FBO_AO 16
+#define ERRGL_NO_GLEW 32
+
+// returns an ERRGL code
+int initGl();
+
+void drawFrame(int quality);
+void clearFrame();
+void UpdateShadowmap();
+
+int GetCurrentHetatm();
+
+int GetCurrentAtm();
+
+void SetTextureAccess(bool bilinear);
+//void ReloadTexture(vector<Byte> t, bool bilinear);
+
+Byte* GetSnapshot(int sx, int sy, bool alpha);
+
+//extern Mol mol;
+//extern ShadowMap shadowmap;
+extern CgUtil shadowSettings;
+extern CgUtil shadowSettingsAcc;
+
+extern  float background;
+
+void StartTime();
 long int TakeTime(FILE *f, char *st);
 long int TakeTotalTime();
 void  Cycle(  float &c, float min, float max, float step);
@@ -48,17 +83,9 @@ void ResetColMode();
 
 void ChangeColorSchema(int i=-1);
 
-
-
-//extern std::vector<Byte> texture;
-
-//bool LoadImagePPM( const char * filename , std::vector<Byte> &im);
-//bool SaveImagePPM( const char * filename , const std::vector<Byte> &im, int sizex, int sizey);
-
-Byte* GetSnapshot(int sx, int sy, bool alpha);
-
-void UpdateShadowmap();
-extern CgUtil shadowSettings;
-extern CgUtil shadowSettingsAcc;
+// PNG related
+bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
+void downsample2x2(Byte * data, int sx, int sy);
+void downsample2x2NoAlpha(Byte * data, int sx, int sy);
 
 #endif
