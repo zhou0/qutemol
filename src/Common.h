@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 #include <vector>
 extern int winx, winy;
 
@@ -76,5 +82,4 @@ void ChangeColorSchema(int i=-1);
 
 //bool LoadImagePPM( const char * filename , vector<Byte> &im);
 //bool SaveImagePPM( const char * filename , const vector<Byte> &im, int sizex, int sizey);
-
 

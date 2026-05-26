@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 
 #ifndef _WX_MAIN_H_
 #define _WX_MAIN_H_
@@ -149,4 +155,3 @@ private:
 #endif // #if wxUSE_GLCANVAS
 
 #endif // #ifndef _WX_MAIN_H_
-

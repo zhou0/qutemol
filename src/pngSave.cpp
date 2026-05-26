@@ -3,6 +3,7 @@
 #include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -46,7 +47,7 @@ static void downsample2x2NoAlpha(unsigned char * data, int sx, int sy){
   }
 }
 
-bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
+bool savePNG(const char *filename, unsigned char *data, int sx, int sy, bool alpha) {
   FILE *fp;
   png_structp png_ptr;
   png_infop info_ptr;
@@ -84,9 +85,9 @@ bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
 
   png_write_info(png_ptr, info_ptr);
 
-  vector<png_bytep> row_pointers(sy);
+  vector<png_Bytep> row_pointers(sy);
   for (int y=0; y<sy; y++)
-    row_pointers[sy-1-y] = (png_bytep)(data + y*sx*((alpha)?4:3));
+    row_pointers[sy-1-y] = (png_Bytep)(data + y*sx*((alpha)?4:3));
 
   png_write_image(png_ptr, &row_pointers[0]);
   png_write_end(png_ptr, NULL);

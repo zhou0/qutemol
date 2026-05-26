@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 
 
 int getAtomColor(const char* atomicElement);
@@ -10,7 +16,6 @@ int getChainColor(int chianIndex);
 
                          
 bool readArtFile(const char* filename);                                  
-                                                           
                                                            
                                                            
                                                            

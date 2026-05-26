@@ -3,6 +3,7 @@
 #include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
+
 #include <gif_lib.h>
 #include <stdio.h>
 #include <stdlib.h>

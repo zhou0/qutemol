@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 
+
 typedef unsigned char Byte;
 
 #include <vector>
@@ -655,4 +656,3 @@ QAtom::QAtom(string st){
   covalentr*=0.85; // mystical value!!!
   
 }
-

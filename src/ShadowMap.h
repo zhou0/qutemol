@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 #include <vcg/space/point3.h>
 using namespace vcg;
 
@@ -43,4 +49,3 @@ static void UnBind();
 //extern unsigned int finalFrame; // frame dove metto l'immagine finale! 0 se lo schermo.
 
 //bool createOffsetFrame(uint &frameID, uint &textureID, int screensize, int flags);
-

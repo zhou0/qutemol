@@ -5,6 +5,7 @@
 #include <GL/glu.h>
 
 
+
 #include "MyCanvas.h"
 #include "HardSettings.h"
 
@@ -26,12 +27,14 @@ bool MyCanvas::SetAsOutput(){
       if ( !InitRes() ) return false;
     }
     glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, frameID[ currentRes ] );
+  return true;
   }
   return true;
 }
 
 bool MyCanvas::SetAsTexture(){
   glBindTexture( GL_TEXTURE_2D, textureID[ currentRes ] );
+  return true;
   return true;
   return true;
 }
@@ -267,4 +270,3 @@ bool MyCanvas::InitRes(){
  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0 );   
  return false;
 }
-

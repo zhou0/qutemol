@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 #include <string>
 #include <vector>
 #include <vcg/space/point3.h>
@@ -249,4 +255,3 @@ private:
 };
 
 extern float stick_radius;
-

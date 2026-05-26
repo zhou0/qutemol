@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 
 
 class MyCanvas{
@@ -43,5 +49,4 @@ private:
 };
 
 extern MyCanvas mainCanvas, haloCanvas, moltextureCanvas, shadowmapCanvas, shadowAOCanvas;
-
 

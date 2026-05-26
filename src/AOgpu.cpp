@@ -5,6 +5,7 @@
 #include <GL/glu.h>
 
 
+
 typedef unsigned char Byte;
 
 #include "CgUtil.h"
@@ -238,5 +239,3 @@ void AOgpu::GetFinalTexture(vector<Byte> &text,Mol &m){
   m.FillTexture( text, sum, hardSettings.TSIZE, 4.0/float(div) /*8*2*255 / (div * areas )*/ );
   m.DuplicateTexels(text, hardSettings.TSIZE); 
 }
-
-

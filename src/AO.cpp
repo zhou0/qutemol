@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GL/glu.h>
 
+
 typedef unsigned char Byte;
 
 #include <math.h>

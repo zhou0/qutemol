@@ -5,13 +5,14 @@
 #include <GL/glu.h>
 
 
+
 #include <wx/defs.h>
 #include <wx/app.h>
 //#include <wx/menu.h>
 //#include <wx/dcclient.h>
 
 
-#include <vcg/wrap/gui/trackball.h>
+#include <wrap/gui/trackball.h>
 using namespace vcg;
 using namespace std;
 

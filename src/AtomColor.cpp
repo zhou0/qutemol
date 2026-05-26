@@ -3,6 +3,7 @@
 #include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
+
 #include <map>
 #include <string>
 using namespace std;
@@ -324,4 +325,3 @@ int getChainColor(int index){
   }
   return res;
 }
-

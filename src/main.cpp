@@ -3,6 +3,7 @@
 #include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
+
 //
 // qutemol on wxWidgets MAIN 
 //
@@ -1073,4 +1074,3 @@ void TestGLCanvas::InitGL()
 {
   initGl();
 }
-

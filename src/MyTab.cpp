@@ -3,6 +3,7 @@
 #include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
+
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
 #endif
@@ -1362,4 +1363,3 @@ void MyTab::UpdateAll(){
   //EnableGeom();
   EnableCustom();
 }
-
