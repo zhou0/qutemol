@@ -53,12 +53,6 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/cnr-isti-vclab/vcglib.git vcg
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-
     - name: Configure CMake
       shell: bash
       run: |
@@ -66,7 +60,13 @@ jobs:
         if [ "${{ runner.os }}" == "Windows" ]; then
           TOOLCHAIN_ARG="-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
         fi
-        cmake -B ${{ steps.strings.outputs.build-output-dir }}         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}         -DVCG_PATH=${{ github.workspace }}/vcg         $TOOLCHAIN_ARG         -S ${{ github.workspace }}
+        cmake -B build \
+              -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }} \
+              -DCMAKE_C_COMPILER=${{ matrix.c_compiler }} \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DVCG_PATH=vcg \
+              $TOOLCHAIN_ARG \
+              -S .
 
     - name: Build
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: cmake --build build --config ${{ matrix.build_type }}

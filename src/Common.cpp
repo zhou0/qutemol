@@ -8,7 +8,7 @@
 
 typedef unsigned char Byte;
 typedef unsigned int uint;
- 
+
 #include "CgUtil.h"
 
 #include <math.h>
@@ -37,8 +37,8 @@ using namespace std;
 
 #include "ShadowMap.h"
 
-extern CgUtil shadowSettings;  
-extern CgUtil shadowSettingsAcc;  
+extern CgUtil shadowSettings;
+extern CgUtil shadowSettingsAcc;
 
 GeoSettings geoSettings; // singleton
 
@@ -99,7 +99,7 @@ using namespace std;
 
 
 // VIS06 presentaiton modes:
-bool draw_balls=true; 
+bool draw_balls=true;
 bool draw_sticks=true;
 bool draw_wireframe_sticks=false;
 bool draw_wireframe_balls=false;
@@ -141,26 +141,26 @@ void UpdateShadowmap(){
 void drawFrame(); // def later...
 
 Byte* GetSnapshot(int sx, int sy, bool alpha){
-  
+
 
   static uint textureSnap = 666;
   static  uint frameSnap;
-  
+
   // set offline rendering
   mainCanvas.RedirectToMemory();
   mainCanvas.SetRes(sx);
   //hardsx=mainCanvas.GetHardRes();
-  
-  if (!mainCanvas.SetAsOutput()) return NULL; 
+
+  if (!mainCanvas.SetAsOutput()) return NULL;
 
   drawFrame();
-  
+
   // capture frame
   sx=sy=mainCanvas.GetHardRes();
   Byte* res=new(Byte[sx*sy*4]);
   glReadPixels(0,0,sx,sy,alpha?GL_RGBA:GL_RGB,GL_UNSIGNED_BYTE,res);
 
-  
+
   mainCanvas.RedirectToVideo();
   mainCanvas.SetAsOutput();
 
@@ -170,10 +170,10 @@ Byte* GetSnapshot(int sx, int sy, bool alpha){
 
 
 void setProjection(int res){
-  
+
   int winx,winy;
-  winx=winy=res; 
-  
+  winx=winy=res;
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 	GLfloat nearPlane = 0.01;
@@ -185,14 +185,14 @@ void setProjection(int res){
        }
     else
 //    if(winx<winy) glOrtho(-1,+1,-(float)winy / winx,+(float)winy / winx, 1, 201);
-//    else glOrtho(-(float)winx / winy,+(float)winx / winy,-1,+1, 1, 201);    
+//    else glOrtho(-(float)winx / winy,+(float)winx / winy,-1,+1, 1, 201);
 //    if(winx<winy) glOrtho(-size,+size,-ratio,+ratio, 1, 201);
-//    else glOrtho(-ratio,+ratio,-size,+size, 1, 201);    
+//    else glOrtho(-ratio,+ratio,-size,+size, 1, 201);
     if(winx<winy) glOrtho(-1,+1,-(float)winy / winx,+(float)winy / winx, 1, 201);
-    else glOrtho(-(float)winx / winy,+(float)winx / winy,-1,+1, 40-2, 40+200);    
-    
+    else glOrtho(-(float)winx / winy,+(float)winx / winy,-1,+1, 40-2, 40+200);
+
   glViewport(0, 0, winx,winy);
-  
+
   glMatrixMode(GL_MODELVIEW);
 }
 
@@ -201,56 +201,56 @@ void setProjection(int res){
 
 void MakeHiqualityScreen(int quality){
   int curres=mainCanvas.GetSoftRes();
-  
+
   mainCanvas.RedirectToMemory();
-  
+
   mainCanvas.SetRes(curres * quality / 100 );
-  
+
   if (!mainCanvas.SetAsOutput()) {
     // something went wrong. Fall-back: do a normal screenshot
     mainCanvas.RedirectToVideo();
     mainCanvas.SetAsOutput();
     drawFrame();
-    return; 
+    return;
   }
-  
+
   float HSratio = float(mainCanvas.GetSoftRes()) / mainCanvas.GetHardRes();
 
   drawFrame();
-  
+
   mainCanvas.RedirectToVideo();
   mainCanvas.SetAsOutput();
 
-  glActiveTextureARB(GL_TEXTURE1_ARB);   
+  glActiveTextureARB(GL_TEXTURE1_ARB);
   glDisable(GL_TEXTURE_2D);
-  
-  glActiveTextureARB(GL_TEXTURE0_ARB);   
+
+  glActiveTextureARB(GL_TEXTURE0_ARB);
   mainCanvas.SetAsTexture();
-   
+
   glDisable(GL_FRAGMENT_PROGRAM_ARB);
   glDisable(GL_VERTEX_PROGRAM_ARB);
-  
+
   setProjection(mainCanvas.GetSoftRes());
-  
+
 
   glMatrixMode(GL_MODELVIEW);
   //glPushMatrix();
   glLoadIdentity();
-    
+
   //glClearColor(1,1,1,1);
   //glClear(GL_COLOR_BUFFER_BIT);
-  
+
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_DEPTH_TEST);
-  
-  
+
+
   //glColor3f(1,0.75,0.75); // <= TEST HQ
   glColor3f(1,1,1);
-  
+
   float z=-45;
-  
+
   glBegin(GL_QUADS);
-    
+
     glTexCoord2f(0,0);glVertex3f(-1,-1, z);
     glTexCoord2f(HSratio,0);glVertex3f(+1,-1, z);
     glTexCoord2f(HSratio,HSratio);glVertex3f(+1,+1, z);
@@ -260,11 +260,11 @@ void MakeHiqualityScreen(int quality){
   glEnable(GL_FRAGMENT_PROGRAM_ARB);
   glEnable(GL_VERTEX_PROGRAM_ARB);
   glEnable(GL_DEPTH_TEST);
-  
+
   //glMatrixMode(GL_MODELVIEW);glPopMatrix();
   //glMatrixMode(GL_PROJECTION);glPopMatrix();
-  
-  
+
+
 }
 
 
@@ -281,43 +281,43 @@ double dist=3.0, alpha=0.0, beta=0.0;
 //vector<Byte> texture(hardSettigs.TSIZE*hardSettigs.TSIZE*3,128);
 
 void QAtom::DrawHalo(){
-   
+
   if ((!geoSettings.showHetatm)&&(hetatomFlag)) return;
-  
+
   float s=cgSettings.P_halo_size * 2.5;
-  
+
   glMultiTexCoord2fARB(GL_TEXTURE1_ARB, r+s, (r+s)*(r+s) / (s*s+2*r*s));
-  
+
   glTexCoord2f(+1,+1);
   glVertex3f(px,py,pz);
 
   glTexCoord2f(-1,+1);
   glVertex3f(px,py,pz);
-  
+
   glTexCoord2f(-1,-1);
   glVertex3f(px,py,pz);
-  
+
   glTexCoord2f(+1,-1);
   glVertex3f(px,py,pz);
-  
+
 }
-  
+
 void QAtom::Draw(){
-  
+
   if ((!geoSettings.showHetatm)&&(hetatomFlag)) return;
-  
+
   glColor3f(cr,cg,cb);
   glTexCoord2f(tx/float(moltextureCanvas.GetHardRes()),ty/float(moltextureCanvas.GetHardRes()));
-    
+
   glNormal3f(+1,+1, r);
   glVertex3f(px,py,pz);
 
   glNormal3f(-1,+1, r);
   glVertex3f(px,py,pz);
-  
+
   glNormal3f(-1,-1, r);
   glVertex3f(px,py,pz);
-  
+
   glNormal3f(+1,-1, r);
   glVertex3f(px,py,pz);
 }
@@ -327,17 +327,17 @@ void Bond::DrawHalo(){
   if ((!geoSettings.showHetatm)&&(hetatomFlag)) return;
 
   glTexCoord4f(dir[0],dir[1],dir[2], 1.0/lenght);
-  
+
   glNormal3f(+1,+1,0);
   glVertex3f(a[0],a[1],a[2]);
   glNormal3f(-1,+1,0);
   glVertex3f(a[0],a[1],a[2]);
-  
+
   glNormal3f(-1,-1,0);
   glVertex3f(b[0],b[1],b[2]);
   glNormal3f(+1,-1,0);
   glVertex3f(b[0],b[1],b[2]);
-  
+
 }
 
 void Bond::Draw(){
@@ -359,27 +359,27 @@ void Bond::Draw(){
   glVertex3f(a[0],a[1],a[2]);
   glNormal3f(-1,+1,0);
   glVertex3f(a[0],a[1],a[2]);
-  
+
   glNormal3f(-1,-1,0);
   glVertex3f(b[0],b[1],b[2]);
   glNormal3f(+1,-1,0);
   glVertex3f(b[0],b[1],b[2]);
-  
+
 }
 
-void QAtom::DrawShadowmap(){    
+void QAtom::DrawShadowmap(){
 
   if ((!geoSettings.showHetatm)&&(hetatomFlag)) return;
 
   glNormal3f(+1,+1, r);
   glVertex3f(px,py,pz);
-    
+
   glNormal3f(-1,+1, r);
   glVertex3f(px,py,pz);
-  
+
   glNormal3f(-1,-1, r);
   glVertex3f(px,py,pz);
-  
+
   glNormal3f(+1,-1, r);
   glVertex3f(px,py,pz);
 }
@@ -387,19 +387,19 @@ void QAtom::DrawShadowmap(){
 void Bond::DrawShadowmap(){
 
   if ((!geoSettings.showHetatm)&&(hetatomFlag)) return;
-  
+
   glTexCoord4f(dir[0],dir[1],dir[2], 1.0/lenght);
-  
+
   glNormal3f(+1,+1,0);
   glVertex3f(a[0],a[1],a[2]);
   glNormal3f(-1,+1,0);
   glVertex3f(a[0],a[1],a[2]);
-  
+
   glNormal3f(-1,-1,0);
   glVertex3f(b[0],b[1],b[2]);
   glNormal3f(+1,-1,0);
   glVertex3f(b[0],b[1],b[2]);
-  
+
 }
 
 float extractCurrentScaleFactor(float x[4][4]){
@@ -421,39 +421,39 @@ float extractCurrentScaleFactor(){
 void prepareDepthTextureForCurrentViewpoint();
 
 
-void Mol::DrawHalos(){ 
-  
+void Mol::DrawHalos(){
+
     // let's try to aviod THIS!
     prepareDepthTextureForCurrentViewpoint(); // hum, unavoidable.
-    
+
     glPushMatrix();
     glScalef(1/r,1/r,1/r);
     glTranslatef(-px,-py,-pz);
 
     float x[4][4], scalef;
     glGetFloatv(GL_MODELVIEW_MATRIX, &(x[0][0]));
-    
-    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0, 
+
+    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,
       scalef=extractCurrentScaleFactor(x), 0,0,0
     );
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
-    
+
     glDepthMask(false);
     glEnable(GL_BLEND);
-    
+
     if (cgSettings.doingAlphaSnapshot)
       glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     else
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     cgSettings.BindHaloShader( haloCanvas.GetResPow2() );
-    
-    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0, 
+
+    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 0,
       (100.0+cgSettings.P_halo_aware*1300.0)/scalef/mol.r, 0,0,0
     );
-    
+
     glBegin(GL_QUADS);
       for (int i=0; i<atom.size(); i++) atom[i].DrawHalo();
     glEnd();
@@ -466,11 +466,11 @@ void Mol::DrawHalos(){
 
     glDisable(GL_BLEND);
     cgSettings.BindShaders();
-    
+
     glDepthMask(true);
-    
+
     glPopMatrix();
-    
+
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
@@ -484,20 +484,20 @@ void Mol::DrawShadowmap(bool invert){
     float x[4][4], scalef;
     glGetFloatv(GL_MODELVIEW_MATRIX, &(x[0][0]));
 
-    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0, 
+    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,
       scalef=extractCurrentScaleFactor(x),0,0,0
     );
-    
-    /*if (invert) { 
+
+    /*if (invert) {
     glScalef(1,1,-1);
     }*/
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
-    
-    glActiveTextureARB(GL_TEXTURE0_ARB); 
+
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     glDisable(GL_TEXTURE_2D);
-    glActiveTextureARB(GL_TEXTURE1_ARB); 
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     glDisable(GL_TEXTURE_2D);
 
 
@@ -508,35 +508,35 @@ void Mol::DrawShadowmap(bool invert){
 
     if (sticks) {
       shadowSettings.BindStickShaders();
-      
-      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,  
+
+      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,
         scalef, stick_radius,stick_radius*2,0  );
-      
-      
+
+
       glBegin(GL_QUADS);
         for (int i=0; i<bond.size(); i++) bond[i].DrawShadowmap();
       glEnd();
-    }   
+    }
     glPopMatrix();
 
 }
 
-void Mol::Draw(){ 
-  
+void Mol::Draw(){
+
     glPushMatrix();
     glScalef(1/r,1/r,1/r);
     glTranslatef(-px,-py,-pz);
-    
+
 
     float x[4][4], scalef;
     glGetFloatv(GL_MODELVIEW_MATRIX, &(x[0][0]));
-    
-    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0, 
+
+    glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,
       scalef=extractCurrentScaleFactor(x),0,0,0
     );
-    
+
     /*
-    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6, 
+    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6,
       1.0 / ( scalef*scalef) , 0,0,0
     );*/
 /*    printf("ScaleFactor= %f, ShadowScaleFactor= %f\n",
@@ -546,20 +546,20 @@ void Mol::Draw(){
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_TEXTURE_2D);
 
-    glActiveTextureARB(GL_TEXTURE0_ARB); 
+    glActiveTextureARB(GL_TEXTURE0_ARB);
     moltextureCanvas.SetAsTexture();
-    
+
     if (cgSettings.P_shadowstrenght>0) {
       ShadowMap::GetCurrentPVMatrix();
       ShadowMap::FeedParameters();
     }
-      
+
     for (int i=0; i<3; i++)
-    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i, 
+    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i,
       x[i][0],x[i][1],x[i][2],0
     );
-    
-    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6, 
+
+    glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6,
       mol.PredictAO(),0,0,0
     );
 
@@ -576,38 +576,38 @@ void Mol::Draw(){
         glEnable(GL_VERTEX_PROGRAM_ARB);
         glEnable(GL_FRAGMENT_PROGRAM_ARB);
         //if (DL_atoms==666) glGenD
-          
+
         glBegin(GL_QUADS);
         for (int i=0; i<atom.size(); i++)  atom[i].Draw();
         glEnd();
-        
+
         glDisable(GL_VERTEX_PROGRAM_ARB);
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
       }
     }
 
- 
-    if (draw_sticks) 
+
+    if (draw_sticks)
     if (sticks) {
       glEnable(GL_VERTEX_PROGRAM_ARB);
       glEnable(GL_FRAGMENT_PROGRAM_ARB);
       cgSettings.BindStickShaders();
-      ShadowMap::FeedParameters();  
+      ShadowMap::FeedParameters();
       for (int i=0; i<3; i++)
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i, 
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, i,
         x[i][0],x[i][1],x[i][2],0
       );
-      
+
       /*
-      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6, 
+      glProgramEnvParameter4fARB(GL_FRAGMENT_PROGRAM_ARB, 6,
         1.0 / ( scalef*scalef) , stick_radius,1.0 / ( scalef) ,0
       );*/
-      
+
       glEnable(GL_TEXTURE_2D);
-      
-      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,  
-        scalef, stick_radius,stick_radius*2,0  );     
-      
+
+      glProgramEnvParameter4fARB(GL_VERTEX_PROGRAM_ARB, 0,
+        scalef, stick_radius,stick_radius*2,0  );
+
       glColor3f(1,1,1);
       if (draw_wireframe_sticks) {
         glDisable(GL_FRAGMENT_PROGRAM_ARB);
@@ -624,8 +624,8 @@ void Mol::Draw(){
         glEnd();
       }
       cgSettings.BindShaders();
-    }   
-    
+    }
+
     glPopMatrix();
 }
 
@@ -642,7 +642,7 @@ void FillRandomTexture(){
   //  texture[k++]=128+random(127);
   //  texture[k++]=128+random(127);
   //  random(127);
-  // 
+  //
   //}
 }
 
@@ -656,7 +656,7 @@ void FillRedTexture(){
   }
 }*/
 
-void FillShadedTexture(){ 
+void FillShadedTexture(){
 //  OctaMapSamp s(CSIZE);
 
 //  CubeMapSamp::SetSize(CSIZE);
@@ -665,16 +665,16 @@ void FillShadedTexture(){
 }
 
 void drawQuad(float x, float y, float z, float r){
-  
+
   glNormal3f(+1,+1, r);
   glVertex3f(x,y,z);
 
   glNormal3f(-1,+1, r);
   glVertex3f(x,y,z);
-  
+
   glNormal3f(-1,-1, r);
   glVertex3f(x,y,z);
-  
+
   glNormal3f(+1,-1, r);
   glVertex3f(x,y,z);
 }
@@ -684,17 +684,17 @@ void drawQuad(float x, float y, float z, float r){
 Point3f getGlLightPos(){
   float pos[4];
   glGetLightfv(GL_LIGHT0, GL_POSITION, pos);
-  
+
   Point3f L=Point3f(pos);
   float x[4][4];
   glGetFloatv(GL_MODELVIEW_MATRIX, &(x[0][0]));
-  Point3f res( 
+  Point3f res(
     L * Point3f(x[0]),
     L * Point3f(x[1]),
     L * Point3f(x[2])
   );
   res.Normalize();
-  
+
   return -res;
 }
 
@@ -726,12 +726,12 @@ bool Mol::DecentAO(){
 float Mol::PredictAO(){
     //  Additive prediction
     //return 0.6*(DirV.size()-AOdoneLvl)/float(DirV.size());
-    
+
     // multiplicative prediction
     if (DirV.size()==0) return 1.0; else {
       float coeff=0.25+(AOdoneLvl-1)/20.0;
       if (coeff>1.0f) coeff=1.0f;
-      return 
+      return
       coeff*float(DirV.size()*1.0f) /  (AOdoneLvl/*+DirV.size()*0.3f*/);
     }
 }
@@ -769,32 +769,32 @@ bool Mol::PrepareAOSingleView(){
 }
 
 bool Mol::PrepareAOstep(int nsteps){
-  
+
   if (!DoingAO()) return true;
   if (!AOstarted) PrepareAOstart();
- 
+
   AOgpu2::Bind();
   if (validView(DirV[AOdoneLvl])) AOgpu2 ao(DirV[AOdoneLvl], *this, DirV.size());
   AOgpu2::UnBind();
 
-  
+
   AOdoneLvl++;
   return  (AOdoneLvl>=DirV.size()) ;
 }
 
 void Mol::PrepareAOallAtOnce(){
   if (AOready) return;
-  
+
   StartTime();
-  
+
   while (!PrepareAOstep(1));
-    
+
   //AOgpu2::GetFinalTexture(texture,*this);
             //refresh();
-            
+
   FILE *f = fopen("res.txt", "w");
   long int w=TakeTime(f,"sampled");
-            
+
   fprintf(f,"          %d views done in %d msec (%.2f views x sec), with %d atoms & %d sticks.\n",
      DirV.size(), w,
      DirV.size()*1000.0/w, this->atom.size(),
@@ -821,11 +821,11 @@ void setLightDir(Point3f d){
 
 Point3f getDirFromTrackball(vcg::Trackball &tb){
   glPushMatrix();
-  gluLookAt(1,-3,-5,   0,0,0,   0,1,0);    
+  gluLookAt(1,-3,-5,   0,0,0,   0,1,0);
 
   tb.center=Point3f(0, 0, 0);
   tb.radius= 1;
-  
+
 	tb.GetView();
   tb.Apply();
 
@@ -833,7 +833,7 @@ Point3f getDirFromTrackball(vcg::Trackball &tb){
   float d[16];
   glGetFloatv(GL_MODELVIEW_MATRIX,d);
   glPopMatrix();
-  
+
   Point3f res(-d[8],-d[9],-d[10]);
   res.Normalize();
   return res;
@@ -860,19 +860,19 @@ void drawLightDir()
 	glEnd();
     glPopAttrib();
 #endif
-    
+
 	glPopMatrix();
 }
 
 void drawFrame() {
-  
+
     cgSettings.MakeShaders();
-    
+
     if (mol.DoingAO()) {
       // do at least one more step per rendering
       mol.PrepareAOstep(1);
       // continue until decent
-      while (!mol.DecentAO()) mol.PrepareAOstep(1);  
+      while (!mol.DecentAO()) mol.PrepareAOstep(1);
     }
 
     /*if (cgSettings.UseHalo()>0) {
@@ -882,55 +882,55 @@ void drawFrame() {
       // write depth in depthbuffer
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
     }*/
-  
-  
+
+
   mainCanvas.SetAsOutput();
-    
-  if (cgSettings.doingAlphaSnapshot)    
+
+  if (cgSettings.doingAlphaSnapshot)
     glClearColor( cgSettings.P_halo_col, cgSettings.P_halo_col, cgSettings.P_halo_col, 0.0f);
   else
     glClearColor( cgSettings.P_bg_color_R, cgSettings.P_bg_color_G, cgSettings.P_bg_color_B, 0.0f);
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-  
-  
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  
-  
+
+
   Point3f lightDir;
-  
+
   if  ( cgSettings.P_sem_effect  // fixed light dir sem effect
 //    || mol.sticks               // quick Hack: fixed light dir when bonds
     )
     lightDir= Point3f(0,0,1);
-  else 
+  else
     lightDir=getDirFromTrackball(lightTrack);
-    
+
   setLightDir( lightDir );
 
 //  gluLookAt(0,0,-3,   0,0,0,   0,1,0);    original
 //  gluLookAt(0,0,-3,   0,0,0,   0,1,0);    ok for tra
 
-  gluLookAt(0,0,-40,   0,0,0,   0,1,0);    
+  gluLookAt(0,0,-40,   0,0,0,   0,1,0);
   if(MovingLightMode) drawLightDir();
   glColor3f(1,1,1);
   if (1) {
-    
 
-    
+
+
     //track.center=Point3f(0, 0, 0);
     //track.radius= 1;
     //setProjection();
-  
+
     if (aniStep>=0)
     {
       double extraRot=360.0*aniStep;
-      
+
       // set extra rotation for GIF animation:
       switch (hardSettings.GIF_ANIMATION_MODE) {
        default:
-       case 0: 
+       case 0:
         glRotated(-hardSettings.GIF_ROT_SIDEVIEW_ANGLE,1,0,0);
         glRotated(extraRot,0,1,0);
         break;
@@ -955,13 +955,13 @@ void drawFrame() {
         }break;
       }
     }
-    
+
     setProjection( mainCanvas.GetVideoSize() );
     track.GetView();
     track.Apply();
     setProjection( mainCanvas.GetSoftRes() );
-    
-    
+
+
     if (cgSettings.P_use_shadowmap()) {
       shadowmap.computeAsTexture( getGlLightPos() , cgSettings.do_use_doubleshadow(), shadowmapCanvas);
       //shadowmap.computeAsTexture( Point3f(0,1,0) );
@@ -972,29 +972,29 @@ void drawFrame() {
     glEnable(GL_TEXTURE_2D);
     //glBindTexture(GL_TEXTURE_2D, molTexture);
 
-    glActiveTextureARB(GL_TEXTURE1_ARB); 
+    glActiveTextureARB(GL_TEXTURE1_ARB);
     shadowmapCanvas.SetAsTexture();
-    
-    
-  
+
+
+
     mol.Draw();
     //  shadowmap.m.DrawShadowmap(false);
 
-  
+
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
     glDisable(GL_BLEND);
-    
+
     if (cgSettings.UseHalo()>0) mol.DrawHalos();
   }
 
 }
 
-void SetTextureAccess(bool bilinear){  
-  glActiveTextureARB(GL_TEXTURE0_ARB); 
+void SetTextureAccess(bool bilinear){
+  glActiveTextureARB(GL_TEXTURE0_ARB);
   moltextureCanvas.SetAsTexture();
-  
-  
+
+
   if (bilinear) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -1008,12 +1008,12 @@ void SetTextureAccess(bool bilinear){
 }
 
 /*
-void ReloadTexture(vector<Byte> t, bool bilinear){  
+void ReloadTexture(vector<Byte> t, bool bilinear){
 //  glEnable(GL_TEXTURE);
   glEnable(GL_TEXTURE_2D);
-  
-  
-  glActiveTextureARB(GL_TEXTURE0_ARB); 
+
+
+  glActiveTextureARB(GL_TEXTURE0_ARB);
   glBindTexture(GL_TEXTURE_2D, molTexture);
 
   glTexImage2D(
@@ -1026,13 +1026,13 @@ void ReloadTexture(vector<Byte> t, bool bilinear){
     GL_UNSIGNED_BYTE,
     (void*)&(t[0])
   );
-  
-  
+
+
   SetTextureAccess(bilinear);
 }*/
 
 int initGl(){
-  
+
   int res=0;
   glClearDepth(1.0);
   glDepthFunc(GL_LESS);
@@ -1041,25 +1041,25 @@ int initGl(){
 
   float pos[4]={0.0f,0.8f,0.6f,0.0f};
   glLightfv(GL_LIGHT0, GL_POSITION, pos);
-  
+
   glEnable(GL_VERTEX_PROGRAM_ARB);
   glEnable(GL_FRAGMENT_PROGRAM_ARB);
-  
+
   if (!CgUtil::init())  res|=ERRGL_NO_GLEW;
   if(!GLEW_ARB_vertex_program ) res|=ERRGL_NO_VS;
   if(!GLEW_ARB_fragment_program ) res|=ERRGL_NO_FS;
-  
-  
+
+
   if (!shadowmap.init())     res|=ERRGL_NO_FBO_SHADOWMAP;
   if (!shadowmap.initHalo()) res|=ERRGL_NO_FBO_HALO;
-  
+
   if (! AOgpu2::init()) res|=ERRGL_NO_FBO_AO;
-  
+
   cgSettings.UpdateShaders();
-    
+
   //ReloadTexture(texture, true);
   return res;
-  
+
 }
 
 Point3f RandomUnitVec(){
@@ -1099,7 +1099,7 @@ float myfabs(float a){
 }
 
 void  Cycle(  float &c, float min, float max, float step){
-  if (myfabs(c-max)<0.02) c=min; 
+  if (myfabs(c-max)<0.02) c=min;
   else {
     c+=step;
     if (c>max) c=max;
@@ -1108,18 +1108,18 @@ void  Cycle(  float &c, float min, float max, float step){
 
 int InitQuteMol(const char * filename)
 {
-  
+
   CubeMapSamp::SetSize(CSIZE);
   OctaMapSamp::SetSize(CSIZE);
 
   if (filename==NULL) filename="porin.pdb";
-   
+
   mol.ReadPdb(filename);
   cgSettings.SetDefaults();
-  // initGl gets called from the GL canvas on startup.  It's not 
+  // initGl gets called from the GL canvas on startup.  It's not
   // legal to call it before that time because the OpenGL context
   // does not exist yet.
-    
+
   /*if (!initGl()) {
     printf("failed to initialize! :(\n");
     return 0;
@@ -1149,13 +1149,13 @@ bool SaveImagePPM( const char * filename , const Byte *im, int sizex, int sizey)
 			 fwrite(&(im[k++]),1,1,fp);
 			 //k++;
 			}
-	
+
 		fclose(fp);
 		return true;
 }
 
 bool SaveImagePPM( const char * filename , const vector<Byte> &im, int sizex, int sizey){
-  return 
+  return
   SaveImagePPM( filename , (Byte*)(&im[0]), sizex, sizey);
 }
 
@@ -1177,7 +1177,7 @@ bool LoadImagePPM( const char * filename , vector<Byte> &im)
 			 fread(&(im[k++]),1,1,fp);
 			 fread(&(im[k++]),1,1,fp);
 			}
-	
+
 		fclose(fp);
 		return true;
 }

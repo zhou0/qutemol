@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -17,14 +20,17 @@ long int getTicks();
 
 
 // drawing & geom settings...
+class CgUtil;
+class GeoSettings;
+
 extern CgUtil cgSettings;
 extern GeoSettings geoSettings; // singleton
 
 extern bool bilinear;
 extern bool MovingLightMode;
 
-extern bool draw_balls; // just to test 
-extern bool draw_sticks; // just to test 
+extern bool draw_balls; // just to test
+extern bool draw_sticks; // just to test
 extern bool draw_wireframe_sticks;
 extern bool draw_wireframe_balls;
 
@@ -61,7 +67,8 @@ Byte* GetSnapshot(int sx, int sy, bool alpha);
 
 //extern Mol mol;
 //extern ShadowMap shadowmap;
-extern CgUtil shadowSettings; 
+extern CgUtil shadowSettings;
+extern CgUtil shadowSettingsAcc;
 
 extern  float background;
 
@@ -76,10 +83,9 @@ void ResetColMode();
 
 void ChangeColorSchema(int i=-1);
 
+// PNG related
+bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
+void downsample2x2(Byte * data, int sx, int sy);
+void downsample2x2NoAlpha(Byte * data, int sx, int sy);
 
-
-//extern vector<Byte> texture;
-
-//bool LoadImagePPM( const char * filename , vector<Byte> &im);
-//bool SaveImagePPM( const char * filename , const vector<Byte> &im, int sizex, int sizey);
-
+#endif
