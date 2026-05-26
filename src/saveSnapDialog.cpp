@@ -210,7 +210,7 @@ public:
     //checkButton but=new 
   }
   
-  void AddNewInt(wxString label, int *dataz, int min, int max, bool pow2=false, int delta=1=1){
+  void AddNewInt(wxString label, int *dataz, int min, int max, bool pow2=false, int delta=1){
     EventTableEntry e;
     
     e.idText=newID();
