@@ -616,7 +616,7 @@ END_EVENT_TABLE()
 
 TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
     const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-    : wxGLCanvas(_parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE, name)
+    : wxGLCanvas(_parent, id, NULL, pos, size, style|wxFULL_REPAINT_ON_RESIZE, name)
 {
   initdone=false;
   shownHQ=false;
