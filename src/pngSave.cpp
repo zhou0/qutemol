@@ -1,9 +1,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 #ifdef WIN32
 #include <windows.h>
 #endif
+
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -49,7 +51,7 @@ void downsample2x2NoAlpha(unsigned char * data, int sx, int sy){
   }
 }
 
-bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
+bool savePNG(const char *filename, unsigned char *data, int sx, int sy, bool alpha) {
   FILE *fp;
   png_structp png_ptr;
   png_infop info_ptr;
@@ -97,6 +99,6 @@ bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
   return true;
 }
 
-bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse) {
-  return savePNG(filename, (Byte*)data, sx, sy, true);
+bool PNGSaveWithAlpha( const char * filename, const unsigned char * data, int sx, int sy, int reverse) {
+  return savePNG(filename, (unsigned char*)data, sx, sy, true);
 }
