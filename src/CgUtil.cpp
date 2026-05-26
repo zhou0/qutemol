@@ -1,6 +1,6 @@
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cstdio>
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -12,7 +12,6 @@
 #include <string.h>  // for strlen
 #endif
 
-//#include <GL/gl.h>
 #include <stdio.h>
 
 #include "HardSettings.h"

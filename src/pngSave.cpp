@@ -1,3 +1,8 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>

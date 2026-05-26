@@ -1,4 +1,6 @@
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -10,7 +12,6 @@ typedef unsigned int uint;
 
 #include "CgUtil.h"
 
-//#include <GL/gl.h>
 #include <math.h>
 
 

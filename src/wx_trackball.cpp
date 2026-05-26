@@ -1,3 +1,8 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
 
 
 #include <wx/defs.h>
@@ -6,7 +11,7 @@
 //#include <wx/dcclient.h>
 
 
-#include <wrap/gui/trackball.h>
+#include <vcg/wrap/gui/trackball.h>
 using namespace vcg;
 using namespace std;
 

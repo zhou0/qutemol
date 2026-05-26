@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
 //
 // qutemol on wxWidgets MAIN 
 //
@@ -14,7 +16,6 @@
 
 
 
-#include <GL/glew.h>
 
 
 #ifdef __GNUG__
@@ -620,11 +621,13 @@ TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
 {
   initdone=false;
   m_context = new wxGLContext(this);
+  m_context = new wxGLContext(this);
   shownHQ=false;
 }
 
 TestGLCanvas::~TestGLCanvas()
 {
+  delete m_context;
   delete m_context;
 }
 
