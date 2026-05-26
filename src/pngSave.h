@@ -1,14 +1,12 @@
 #ifndef PNGSAVE_H
 #define PNGSAVE_H
 
-#include "Common.h" // for Byte
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha);
-bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
+bool savePNG(const char *filename, unsigned char *data, int sx, int sy, bool alpha);
+bool PNGSaveWithAlpha( const char * filename, const unsigned char * data, int sx, int sy, int reverse = 0);
 void downsample2x2(unsigned char * data, int sx, int sy);
 void downsample2x2NoAlpha(unsigned char * data, int sx, int sy);
 
