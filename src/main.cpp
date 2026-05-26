@@ -672,7 +672,7 @@ void TestGLCanvas::OnPaint( wxPaintEvent& event )
       }
     }
 
-    if (!initdone) wxGLCanvas::OnPaint(event); else
+    if (!initdone) {} else
     if (mol.IsReady()) {
       if (mustDoHQ) {
         drawFrame( hardSettings.STILL_QUALITY );
@@ -681,7 +681,6 @@ void TestGLCanvas::OnPaint( wxPaintEvent& event )
       } else {
         drawFrame( hardSettings.MOVING_QUALITY );
         shownHQ=false;
-  m_context = new wxGLContext(this);
       }
       SwapBuffers();
     }
@@ -695,7 +694,7 @@ void TestGLCanvas::OnSize(wxSizeEvent& event)
 {
 
     // this is also necessary to update the context on some platforms
-    wxGLCanvas::OnSize(event);
+    // base class OnSize call removed for wxWidgets 3.2
 
     // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
 
@@ -719,7 +718,7 @@ void MyFrame::OnEraseBackground(wxEraseEvent& event)
 
 void TestGLCanvas::OnEraseBackground(wxEraseEvent& event)
 {
-  if (!initdone) wxGLCanvas::OnEraseBackground(event);
+  // base class OnEraseBackground call removed for wxWidgets 3.2
     /* Do else do nothing, to avoid flashing on MSW */
 }
 
