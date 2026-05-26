@@ -32,8 +32,8 @@ extern GeoSettings geoSettings; // singleton
 extern bool bilinear;
 extern bool MovingLightMode;
 
-extern bool draw_balls; // just to test 
-extern bool draw_sticks; // just to test 
+extern bool draw_balls; // just to test
+extern bool draw_sticks; // just to test
 extern bool draw_wireframe_sticks;
 extern bool draw_wireframe_balls;
 
