@@ -1,9 +1,15 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
 #include <vector>
-#include "SaveSnapDialog.h"
+#include "saveSnapDialog.h"
 #include "HardSettings.h"
 
 
@@ -210,7 +216,7 @@ public:
     //checkButton but=new 
   }
   
-  void AddNewInt(wxString label, int *dataz, int min, int max, bool pow2=false, int delta){
+  void AddNewInt(wxString label, int *dataz, int min, int max, bool pow2=false, int delta=1){
     EventTableEntry e;
     
     e.idText=newID();

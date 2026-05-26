@@ -1,3 +1,11 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
+#include <vcg/space/point3.h>
+using namespace vcg;
 
 extern bool validView(Point3f p);
 
@@ -12,7 +20,7 @@ public:
   
   
   // adapt to current PVMatrix
-  static void ShadowMap::GetCurrentPVMatrix();
+  static void GetCurrentPVMatrix();
   
   // feed parametmers to FP
   static void FeedParameters();
@@ -41,4 +49,3 @@ static void UnBind();
 //extern unsigned int finalFrame; // frame dove metto l'immagine finale! 0 se lo schermo.
 
 //bool createOffsetFrame(uint &frameID, uint &textureID, int screensize, int flags);
-

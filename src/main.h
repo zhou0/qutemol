@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 
 #ifndef _WX_MAIN_H_
 #define _WX_MAIN_H_
@@ -134,10 +140,12 @@ public:
     void InitGL();
     
     void SceneChanged(); // redraw!
+    wxGLContext* GetContext() { return m_context; }
  
     bool initdone;
 
     bool shownHQ;
+    wxGLContext* m_context;
     
 private:
     //wxWindow *parent;
@@ -147,4 +155,3 @@ private:
 #endif // #if wxUSE_GLCANVAS
 
 #endif // #ifndef _WX_MAIN_H_
-

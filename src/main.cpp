@@ -1,3 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 //
 // qutemol on wxWidgets MAIN 
 //
@@ -11,7 +17,6 @@
 
 
 
-#include <GL/glew.h>
 
 
 #ifdef __GNUG__
@@ -411,7 +416,7 @@ bool MyApp::OnInit()
     sizer->Add(frame->GetToolbar(),      0, wxGROW);
     frame->SetSizer(sizer);
 
-    int tbsize=frame->GetToolbar()->GetBestFittingSize().x;
+    int tbsize=frame->GetToolbar()->GetEffectiveMinSize().x;
     frame->GetToolbar()->SetSize(tbsize,winy);
     frame->GetToolbar()->Layout();
    
@@ -420,67 +425,58 @@ bool MyApp::OnInit()
 
     static const wxCmdLineEntryDesc cmdLineDesc[] =
     {
-      { 
-        wxCMD_LINE_PARAM,_T(""),_T(""),_T("filename.pdb:(molecule to be drawn)"), 
-        wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL 
-      },
-      { 
-        wxCMD_LINE_OPTION,_T("a"),_T(""),_T("filename.art: optional Atom Render Table"), 
-        wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL 
-      },
-      { 
-        wxCMD_LINE_SWITCH,_T("v"),_T(""),_T("don't start, show version name"), 
-        wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL 
-      },
+      { wxCMD_LINE_PARAM, NULL, NULL, "filename.pdb:(molecule to be drawn)", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+      { wxCMD_LINE_OPTION, "a", NULL, "filename.art: optional Atom Render Table", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+      { wxCMD_LINE_SWITCH, "v", NULL, "don't start, show version name", wxCMD_LINE_VAL_NONE, 0 },
       { wxCMD_LINE_NONE }
     };
-    
+
     wxCmdLineParser parser(cmdLineDesc, argc, argv);
-    
+
     parser.Parse();
 
     InitQuteMol( NULL );
 
     wxString artFilename;
-    if (parser.Found(_T("v"))>0) {
+    if (parser.Found("v")>0) {
       FILE *f=fopen("output.txt", "wt");
-      if (f) { 
+      if (f) {
         fprintf(f,"ver 0.4.1");
         fclose(f);
       }
       exit(0);
     }
-    
-    if (parser.Found(_T("a"),&artFilename)>0) {
+
+    if (parser.Found("a",&artFilename)>0) {
       if (!readArtFile(artFilename.ToAscii())) {
         wxMessageBox(
-          wxString(_T("Error reading art file \"") + artFilename +"\""), 
-          _T("Error reading art file"), 
+          wxString(_T("Error reading art file \"") + artFilename +"\""),
+          _T("Error reading art file"),
           wxOK | wxICON_EXCLAMATION, frame);
         exit(0);
         return false;
       }
     }
-       
+
     if (parser.GetParamCount()>0)  frame->OnReadFile(parser.GetParam(0));
 /*      InitQuteMol( parser.GetParam(0).mb_str(wxConvUTF8) );
     } else {
       InitQuteMol( NULL );
     }*/
-  
+
     /* Show the frame */
 
-    frame->Center();    
+    frame->Center();
     frame->SetDropTarget( new MyDropTarget(frame) );
     frame->Show(true);
-    
+
     return true;
 }
 void MyFrame::ResetAO(){
   mol.ResetAO();
 }
 
-  
+
 IMPLEMENT_APP(MyApp)
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -539,13 +535,13 @@ void MyFrame::OnSize(wxSizeEvent& event){
   if (MyTab::Redispose(h - hlogo )) {
     GetToolbar()->SetSize(200,winy);
   }
-  
+
   if (resize_mode==FORCED ) {
     // TODO: fullscreen resize
     //m_canvas->;
     //m_tb->;
     resize_mode=NATURAL;
-    wxFrame::OnSize(event);
+    // removed;
     //m_tb->Fit();
     //m_tb->GetSizer()->RecalcSizes();
     //GetSizer()->RecalcSizes();
@@ -558,13 +554,13 @@ void MyFrame::OnSize(wxSizeEvent& event){
 //    Fit();
   } else
   if (resize_mode==NATURAL ) {
-    wxFrame::OnSize(event);
+    // removed;
     /*
-    GetClientSize(&w,&h);    
-    int tbsize=GetToolbar()->GetBestFittingSize().x;
+    GetClientSize(&w,&h);
+    int tbsize=GetToolbar()->GetEffectiveMinSize().x;
     winx=w-tbsize;
     winy=h;
-    
+
     GetToolbar()->SetPosition( wxPoint(winx,0) );
     GetToolbar()->SetSize(tbsize,winy);
     GetCanvas()->SetSize(winx,winy);
@@ -572,33 +568,33 @@ void MyFrame::OnSize(wxSizeEvent& event){
     resize_mode=CUSTOM;
   }
   else {
-  
+
   static int oldw=0,oldh=0;
 
-  
-  int w1=m_tb->GetBestFittingSize().x;
+
+  int w1=m_tb->GetEffectiveMinSize().x;
   //
 
   int sx=w-w1, sy=h , s;
-  
+
   if ((oldw==w) && (oldh!=h)) s=sy; else
   if ((oldh==h) && (oldw!=w)) s=sx; else
     s=(sx+sy)/2;
-  
+
   wxSize size=wxSize(s+w1, s);
   resize_mode=NATURAL;
   SetClientSize(size);
-  
+
   //wxFrame::OnSize( event );
   //wxSizeEvent event2=wxSizeEvent(size);
   //wxFrame::OnSize(event2);
-  
+
   //oldw=w;oldh=h;
   }
 }
 
 void MyFrame::Maximize(bool max){
-  
+
   //if (custom_resizing) {
     resize_mode=FORCED;
     wxFrame::Maximize(max);
@@ -622,21 +618,24 @@ END_EVENT_TABLE()
 
 TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
     const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-    : wxGLCanvas(_parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE, name)
+    : wxGLCanvas(_parent, id, NULL, pos, size, style|wxFULL_REPAINT_ON_RESIZE, name)
 {
   initdone=false;
+  m_context = new wxGLContext(this);
+  m_context = new wxGLContext(this);
   shownHQ=false;
 }
 
 TestGLCanvas::~TestGLCanvas()
 {
+  delete m_context;
+  delete m_context;
 }
-
 
 wxString errorMSG(int errcode){
   wxString res;
   res=_T("OpenGL problems:\n\n");
-  if (errcode&ERRGL_NO_GLEW) { 
+  if (errcode&ERRGL_NO_GLEW) {
     res+=_T(" - cannot initialize GLEW:\n   ");
     res+= wxString::FromAscii(CgUtil::lasterr);
     res+=_T("\n");
@@ -661,12 +660,12 @@ void TestGLCanvas::OnPaint( wxPaintEvent& event )
     if (!GetContext()) return;
 #endif
 
-    SetCurrent();
+    SetCurrent(*m_context);
 
     if (!initdone) {
       static bool once=false;
       if (!once) {
-        once=true; 
+        once=true;
         int errcode=initGl();
         if (errcode!=ERRGL_OK){
           wxMessageBox(errorMSG(errcode), _T("Unrecoverable error: Problems initializing graphics"), wxOK | wxICON_EXCLAMATION, this);
@@ -675,40 +674,40 @@ void TestGLCanvas::OnPaint( wxPaintEvent& event )
         else initdone=true;
       }
     }
-    
-    if (!initdone) wxGLCanvas::OnPaint(event); else
-    if (mol.IsReady()) { 
+
+    if (!initdone) {} else
+    if (mol.IsReady()) {
       if (mustDoHQ) {
-        drawFrame( hardSettings.STILL_QUALITY );  
+        drawFrame( hardSettings.STILL_QUALITY );
         shownHQ=true;
         mustDoHQ=false;
       } else {
-        drawFrame( hardSettings.MOVING_QUALITY );  
+        drawFrame( hardSettings.MOVING_QUALITY );
         shownHQ=false;
       }
-      SwapBuffers();  
-    }  
+      SwapBuffers();
+    }
     else {
       clearFrame();
-      SwapBuffers();  
-    }   
+      SwapBuffers();
+    }
 }
 
 void TestGLCanvas::OnSize(wxSizeEvent& event)
 {
 
     // this is also necessary to update the context on some platforms
-    wxGLCanvas::OnSize(event);
+    // base class OnSize call removed for wxWidgets 3.2
 
     // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
-    
+
     GetClientSize(&winx, &winy);
     mainCanvas.SetVideoSize(winx);
 #ifndef __WXMOTIF__
     if ( GetContext() )
 #endif
     {
-        SetCurrent();
+        SetCurrent(*m_context);
         glViewport(0, 0, (GLint) winx, (GLint) winy);
     }
 }
@@ -716,13 +715,13 @@ void TestGLCanvas::OnSize(wxSizeEvent& event)
 
 void MyFrame::OnEraseBackground(wxEraseEvent& event)
 {
-  wxFrame::OnEraseBackground(event);
+  // // removed;
     /* Do nothing, to avoid flashing on MSW */
 }
 
 void TestGLCanvas::OnEraseBackground(wxEraseEvent& event)
 {
-  if (!initdone) wxGLCanvas::OnEraseBackground(event);
+  // base class OnEraseBackground call removed for wxWidgets 3.2
     /* Do else do nothing, to avoid flashing on MSW */
 }
 
@@ -749,7 +748,7 @@ void TestGLCanvas::OnKeyDown( wxKeyEvent& event ){
   if (event.GetKeyCode() == WXK_F6 ) {
     if (cgSettings.Load(path.c_str())) {
       MyTab::UpdateAll();
-      
+
       cgSettings.ResetHalo();
       cgSettings.UpdateShaders();
       SceneChanged();
@@ -765,38 +764,38 @@ void TestGLCanvas::OnKeyDown( wxKeyEvent& event ){
   if (event.GetKeyCode() == WXK_F2 ) {
     static int status=0;
     status=(status+1) % 5;
-    draw_balls = (status==0) || (status==1)  || (status==2) ; 
-    draw_sticks = (status==0) || (status==1) || (status==3) || (status==4) ; 
+    draw_balls = (status==0) || (status==1)  || (status==2) ;
+    draw_sticks = (status==0) || (status==1) || (status==3) || (status==4) ;
     draw_wireframe_balls= (status==1)  ;
     draw_wireframe_sticks= (status==1)  || (status==3) ;
-    
+
     SceneChanged();
   }
-  
+
   if (event.GetKeyCode() == WXK_F1 ) {
-    wxString text; 
+    wxString text;
     if (!mol.IsReady() ) text=wxT("(no molecule)");
     else {
 
-      text=wxString( mol.GetMolName(), wxConvUTF8 ).BeforeLast('.') + 
+      text=wxString( mol.GetMolName(), wxConvUTF8 ).BeforeLast('.') +
            wxT("\n (file: \"")+wxString( mol.filename, wxConvUTF8 ) +wxT("\")\n\n");
-      
+
       text=text+wxString::Format(wxT("%d atoms\n"),mol.atom.size());
-      
+
       if (mol.sticks) {
         text=text+wxString::Format(wxT("%d bonds\n"),mol.bond.size());
       }
-      
-           
+
+
       text=text+wxString::Format(
-        _T("\nUsing:\n Texture size = %dx%d\n Patch size=%dx%d"), 
+        _T("\nUsing:\n Texture size = %dx%d\n Patch size=%dx%d"),
         moltextureCanvas.GetHardRes(),
         moltextureCanvas.GetHardRes(),
         CSIZE,CSIZE
       );
 
-      
-    }       
+
+    }
     wxMessageBox(text, _T("QuteMol - file info"), wxOK | wxICON_INFORMATION, this);
   }
 
@@ -804,7 +803,7 @@ void TestGLCanvas::OnKeyDown( wxKeyEvent& event ){
     use_accurate_halo=!use_accurate_halo;
     SceneChanged();
   }
-  
+
   // temp, should e set auto depending on dist
   if (event.GetKeyCode() == WXK_F2 ) {
 
@@ -823,9 +822,9 @@ void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 void MyFrame::OnSaveSnap (wxCommandEvent & event)
 {
-      
+
   int sx,sy;
-  static const wxString FILETYPES = _T( 
+  static const wxString FILETYPES = _T(
      "PNG (lossless)|*.png|"
      "JPEG (lossy)|*.jpg|"
      "GIF animation|*.gif"
@@ -834,27 +833,27 @@ void MyFrame::OnSaveSnap (wxCommandEvent & event)
        new wxFileDialog ( this,
                           wxString  (_T("Save a snapshot")),
                           wxString(), // def path
-                          wxString(), 
+                          wxString(),
                           FILETYPES,
-                          wxSAVE | /*wxCHANGE_DIR |*/ wxOVERWRITE_PROMPT
+                          wxFD_SAVE | /*wxCHANGE_DIR |*/ wxFD_OVERWRITE_PROMPT
                           );
-                          
+
    static int lastFilterIndex=-1;
-   
+
    if (lastFilterIndex==-1) lastFilterIndex=saveSnapDialog->GetFilterIndex();
    saveSnapDialog->SetFilterIndex( lastFilterIndex );
-  
-   wxString ext;   
-   if (lastFilterIndex==1) ext=_T(".jpg"); 
-   else if (lastFilterIndex==2) ext=_T(".gif"); 
+
+   wxString ext;
+   if (lastFilterIndex==1) ext=_T(".jpg");
+   else if (lastFilterIndex==2) ext=_T(".gif");
    else ext=_T(".png");
    saveSnapDialog->SetFilename( wxString( mol.GetFilenameSnap(), wxConvUTF8 )+ ext );
    static wxString CANNOT_SAVE = _T("Could not save snap!\n\nYou might try setting\na lower resolution\nor removing AntiAliasing...");
-   if (saveSnapDialog->ShowModal() == wxID_OK) 
+   if (saveSnapDialog->ShowModal() == wxID_OK)
    if ((new savesnapDialog(this,saveSnapDialog->GetFilterIndex()))->ShowModal() == wxID_OK )
-   { 
-      
-      
+   {
+
+
       int jj=saveSnapDialog->GetFilterIndex();
       lastFilterIndex=jj;
 
@@ -862,31 +861,31 @@ void MyFrame::OnSaveSnap (wxCommandEvent & event)
       int AAMult=(hardSettings.SNAP_ANTIALIAS)?2:1;
       bool useTransp=(hardSettings.PNG_TRANSPARENT==1) && (jj==0);
       if (jj!=2) {
-        
+
         sx=sy=hardSettings.SNAP_SIZE*AAMult;
-      
+
         if ((useTransp) && (cgSettings.UseHalo()>0)) {
           cgSettings.doingAlphaSnapshot=true;
           cgSettings.ResetHalo();
           cgSettings.UpdateShaders();
         }
-      
+
         snap= GetSnapshot(sx,sy, useTransp );
-      
+
         if (cgSettings.doingAlphaSnapshot) {
           cgSettings.doingAlphaSnapshot=false;
           cgSettings.ResetHalo();
           cgSettings.UpdateShaders();
-        }      
+        }
         if (!snap) {
          wxMessageBox(CANNOT_SAVE, _T("OpenGL problems?"), wxOK | wxICON_EXCLAMATION, this);
          return;
         }
      } else sx=sy=hardSettings.GIF_SNAP_SIZE*AAMult;
      {
-        
+
        wxString fn=saveSnapDialog->GetPath();
-        
+
         // fix filename Extension
         //////////////////////////
         //wxString ext[3]={   _T("png"),   _T("jpg") ,  _T("png") };
@@ -1004,7 +1003,7 @@ void MyFrame::OnOpenFile (wxCommandEvent & event)
                           wxString(), // def path
                           wxString(), 
                           FILETYPES,
-                          wxOPEN | wxFILE_MUST_EXIST/*| wxCHANGE_DIR*/,
+                          wxFD_OPEN | wxFD_FILE_MUST_EXIST/*| wxCHANGE_DIR*/,
                           wxDefaultPosition);
 
    if (openFileDialog->ShowModal() == wxID_OK) {
@@ -1075,4 +1074,3 @@ void TestGLCanvas::InitGL()
 {
   initGl();
 }
-

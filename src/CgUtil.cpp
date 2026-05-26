@@ -1,4 +1,10 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <GL/glew.h>
+#include <GL/glu.h>
+
+
 #include "CgUtil.h"
 
 #if defined(_WIN32)
@@ -7,7 +13,6 @@
 #include <string.h>  // for strlen
 #endif
 
-//#include <GL/gl.h>
 #include <stdio.h>
 
 #include "HardSettings.h"
@@ -118,9 +123,9 @@ bool CgUtil::BindHaloShader(int pow){
 }
 
 void CgUtil::LoadVertexHaloShader(){
- char vp[10096];
+ char vp[100000];
 
- sprintf(vp,"\
+ snprintf(vp, 100000, "\
 !!ARBvp1.0\n\
 \n\
 ATTRIB pos = vertex.position;\n\
@@ -130,7 +135,7 @@ ATTRIB dataB = vertex.texcoord[1];\n\
 ");
 
 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 \n\
 PARAM  mat[4] = { state.matrix.mvp };\n\
 PARAM  matP[4] = { state.matrix.projection };\n\
@@ -149,7 +154,7 @@ MOV dataout, dataA;\n\
 MOV dataout.z, dataB.y;\n\
 ", vp);
   
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 \n\
 MUL disp, dataA, dataB.x; \n\
 MUL disp, disp, program.env[0].x; \n\
@@ -159,11 +164,11 @@ MAD p, {1,1,0,0},  disp, p;\n\
 ", vp);
 
  
-  sprintf(vp,"%sMOV result.position, p;\n",vp);
+  snprintf(vp, 100000, "%sMOV result.position, p;\n",vp);
 
-  sprintf(vp,"%sMOV result.texcoord, dataout;\n",vp);
+  snprintf(vp, 100000, "%sMOV result.texcoord, dataout;\n",vp);
   
-  sprintf(vp,"%s\nEND\n", vp);
+  snprintf(vp, 100000, "%s\nEND\n", vp);
   
   glProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(vp), vp);
 
@@ -175,9 +180,9 @@ MAD p, {1,1,0,0},  disp, p;\n\
 
 bool CgUtil::MakeHaloShader(int pow){
  
-  char fp[10096];
+  char fp[100000];
 
-  sprintf(fp,"\
+  snprintf(fp, 100000, "\
 !!ARBfp1.0\n\
 \n\
 ATTRIB data   = fragment.texcoord;  \n\
@@ -207,17 +212,17 @@ MUL tmp.z, tmp.z, tmp2.x;  # again for smoother edges\n\
 ", +P_halo_str-1,  1.0f/(1<<pow), 1.0f/(1<<pow) );
 
   if (P_halo_str<1.0) {
-    sprintf(fp,"%sMUL tmp.z , tmp.z, %10.8f;\n",fp, P_halo_str );
+    snprintf(fp, 100000, "%sMUL tmp.z , tmp.z, %10.8f;\n",fp, P_halo_str );
   }
   if (!doingAlphaSnapshot)
-    sprintf(fp,"%sMAD result.color, {0,0,0,1}, tmp.z, {%5.4f,%5.4f,%5.4f,0.0} ;\n",fp,P_halo_col,P_halo_col,P_halo_col);
+    snprintf(fp, 100000, "%sMAD result.color, {0,0,0,1}, tmp.z, {%5.4f,%5.4f,%5.4f,0.0} ;\n",fp,P_halo_col,P_halo_col,P_halo_col);
   else {
     if (P_halo_col==1.0)  // white halo
-      sprintf(fp,"%sMOV result.color, tmp.z;\n",fp);
+      snprintf(fp, 100000, "%sMOV result.color, tmp.z;\n",fp);
     else 
-      sprintf(fp,"%sMUL result.color, {0,0,0,1}, tmp.z;\n",fp);
+      snprintf(fp, 100000, "%sMUL result.color, {0,0,0,1}, tmp.z;\n",fp);
   }
-  sprintf(fp,"%sEND\n",fp);
+  snprintf(fp, 100000, "%sEND\n",fp);
   
   
 
@@ -229,7 +234,7 @@ MUL tmp.z, tmp.z, tmp2.x;  # again for smoother edges\n\
 }
 
 static void addDrawAOShaderSnippet(char* fp) {
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 # Find shading value \n\
 DP3 l.x, nor, -param; \n\
 #MUL_SAT l.x, l.x, param.w; \n\
@@ -238,40 +243,40 @@ MUL l.x, l.x, param.w; \n\
 ",fp);
 
   if ( (!hardSettings.doubleSM) && (!hardSettings.NVIDIA_PATCH) ) {
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 KIL l.x; # early KILL of fragments on the dark side...\n\
 ",fp);
   }
   
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 # Project! \n\
 DP4 pos.x, Smat0, origpos;   \n\
 DP4 pos.y, Smat1, origpos;    \n\
 DP4 pos.z, Smat2, origpos;     \n\
 ",fp);
 
-  if (hardSettings.doubleSM) sprintf(fp,"%s\n\
+  if (hardSettings.doubleSM) snprintf(fp, 100000, "%s\n\
 CMP tmp, l.x, {0.75,0.5,0.5,1}, {0.25,0.5,0.5,1};\n\
 MAD pos, pos, {0.25,0.5,0.5,0}, tmp; \n\
 \n\
 ",fp); else 
-sprintf(fp,"%s\n\
+snprintf(fp, 100000, "%s\n\
 MAD pos, pos, {0.5,0.5,0.5,0}, {0.5,0.5,0.5,1}; \n\
 ",fp);
 
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 # Access shadow map! \n\
 TEX tmp.x, pos, texture[1], 2D;\n\
 SUB l.z, tmp.x, pos.z; \n\
 ",fp);
 
-  if (hardSettings.doubleSM) sprintf(fp,"%s\n\
+  if (hardSettings.doubleSM) snprintf(fp, 100000, "%s\n\
 CMP l.z, l.x, -l.z, l.z; \n\
 CMP l.x, l.x, -l.x, l.x; # DOUBLE SIDE\n\
 \n\
 ",fp);
 
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 # NVIDIA BUUUUGUUGUGUGUGUGUUGUUGGUGUUGUG GUUGUGUG GGFUCKFUCKFUCKFUCKFUCKFUCKFUCK!!! \n\
 %s\
 CMP result.color, l.z, 0, l.x;  # <-- (shadow & shading) \n\
@@ -295,8 +300,8 @@ hardSettings.NVIDIA_PATCH?
 }
 
 bool CgUtil::MakeDrawAOShader(){
-  char fp[10096];
-  sprintf(fp,"\
+  char fp[100000];
+  snprintf(fp, 100000, "\
 !!ARBfp1.0  \n\
 PARAM  Smat0 = program.env[0];\n\
 PARAM  Smat1 = program.env[1];\n\
@@ -334,8 +339,8 @@ MOV origpos.w, 1;\n");
 };
 
 bool CgUtil::MakeDrawAOShaderSticks(){
-  char fp[10096];
-  sprintf(fp,"\
+  char fp[100000];
+  snprintf(fp, 100000, "\
 !!ARBfp1.0  \n\
 PARAM  Smat0 = program.env[0];\n\
 PARAM  Smat1 = program.env[1];\n\
@@ -562,7 +567,7 @@ bool CgUtil::BindDrawAOShaderSticks(){
 
 
 bool CgUtil::setBallVertexProgram(){
- char vp[10096];
+ char vp[100000];
 
 // #####################
 // #                   #
@@ -570,7 +575,7 @@ bool CgUtil::setBallVertexProgram(){
 // #                   #
 // #####################
  
- sprintf(vp,"\
+ snprintf(vp, 100000, "\
 !!ARBvp1.0\n\
 \n\
 ATTRIB pos = vertex.position;\n\
@@ -580,11 +585,11 @@ ATTRIB data = vertex.normal;\n\
 
 // DataOut = ( +- OutradX, +- OutRadY, InRad ) 
 
- if (P_texture>0) sprintf(vp,"%s\
+ if (P_texture>0) snprintf(vp, 100000, "%s\
 ATTRIB offset = vertex.texcoord;\n\
 ", vp);
 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 \n\
 PARAM  mat[4] = { state.matrix.mvp };\n\
 PARAM  matP[4] = { state.matrix.projection };\n\
@@ -605,7 +610,7 @@ MUL dataout.z, dataout.z, program.env[0].x;\n\
 
   // Enlarge impostors to include borders
   if (_border_outside()!=0) // Compute 'almost' radius and scale indep. border 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 RSQ tmp.y,  dataout.z ;\n\
 #MUL tmp.y,  tmp.y , tmp.y; # Comment to 'almost'\n\
 MUL tmp.x,  %7.5f , tmp.y;\n\
@@ -615,7 +620,7 @@ MAD dataout.w,  dataout.w, dataout.w, -1;\n\
 ",
  vp, _border_outside()   ); 
   
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 \n\
 MUL disp, dataout, dataout.z; \n\
 #MUL disp.x, disp.x, matP[0].x;\n\
@@ -624,22 +629,22 @@ MAD p, {1,1,0,0},  disp, p;\n\
 ", vp);
 
  
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 \n\
 MOV result.position, p;\n\
 \n\
 #MOV dataout.w, p.w;\n"
   ,vp);
 
-  sprintf(vp,"%sMOV result.texcoord, dataout;\n",vp);
+  snprintf(vp, 100000, "%sMOV result.texcoord, dataout;\n",vp);
  
-  if ((P_col_atoms_sat>0)&&(P_col_atoms_bri>0)) sprintf(vp,"%sMOV result.color, vertex.color;\n",vp);
+  if ((P_col_atoms_sat>0)&&(P_col_atoms_bri>0)) snprintf(vp, 100000, "%sMOV result.color, vertex.color;\n",vp);
 
-  if (P_texture>0) sprintf(vp,"%sMOV result.texcoord[2], offset;\n",vp);
+  if (P_texture>0) snprintf(vp, 100000, "%sMOV result.texcoord[2], offset;\n",vp);
   
-  if (P_use_shadowmap() )  sprintf(vp,"%sMOV result.texcoord[3], vertex.position;\n",vp);
+  if (P_use_shadowmap() )  snprintf(vp, 100000, "%sMOV result.texcoord[3], vertex.position;\n",vp);
   
-  sprintf(vp,"%s\nEND\n", vp);
+  snprintf(vp, 100000, "%s\nEND\n", vp);
   
   glProgramStringARB(GL_VERTEX_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(vp), vp);
 
@@ -651,7 +656,7 @@ MOV result.position, p;\n\
 
 
 void CgUtil::addShadowMapComputationFP(char* fp) {
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 #SHADOWMAP\n\
 \n\
 #compute orig pos from attributes... MODE 1\n\
@@ -667,50 +672,50 @@ DP4 t0.y, Smat1, posScreen;         \n\
 DP4 t0.z, Smat2, posScreen;          \n\
 ",fp);  
 
-  if (do_use_doubleshadow()) sprintf(fp,"%s\n\
+  if (do_use_doubleshadow()) snprintf(fp, 100000, "%s\n\
 CMP t1, lighting.z, {0.75,0.5,0.5,1}, {0.25,0.5,0.5,1};\n\
 MAD t0, t0, {0.25,0.5,0.5,0}, t1; \n\
 \n\
 ",fp); else {
   double tmp=(hardSettings.doubleSM)?0.25:0.5;
-sprintf(fp,"%s\n\
+snprintf(fp, 100000, "%s\n\
 MAD t0, t0, {%4.2f,0.5,0.5,0}, {%4.2f,0.5,0.5,1}; \n\
 ",fp,tmp,tmp);
   }
 /*
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 MAD t0, t0, {0.5,0.5,0.5,0}, {0.5,0.5,0.4999999,0}; \n\
 ",fp);  
 */
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 # Access shadow map! \n\
 TEX t1, t0, texture[1], 2D;\n\
 ",fp);
 
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 ADD t.z, -t1.z, t0.z; \n\
 ",fp);  
 
-  if (do_use_doubleshadow()) sprintf(fp,"%s\n\
+  if (do_use_doubleshadow()) snprintf(fp, 100000, "%s\n\
 CMP t.z, lighting.z, -t.z, t.z; \n\
 \n\
 ",fp);
 
 
   if ((!do_use_doubleshadow())&&(P_light_base>0)) {
-    sprintf(fp,"%s\n\
+    snprintf(fp, 100000, "%s\n\
 CMP t.z, lighting.z, 1, t.z;    # if light<0,  then in shadow \n\
 "  ,fp,1.0-P_shadowstrenght);
   }
 
   if (P_shadowstrenght<1) {
-    sprintf(fp,"%s\n\
+    snprintf(fp, 100000, "%s\n\
 MUL tmp, lighting, %5.4f; # compute attenuated light \n\
 CMP lighting, t.z, lighting, tmp; # if in shadow, then use attenuated light \n\
 "  ,fp,1.0-P_shadowstrenght);
   }
   else
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 CMP lighting, t.z, lighting, 0; # if in shadow, then no light \n\
 #CMP result.color, t.z, {0,1,0,0}, {1,0,0,0}; \n\
 #\n\
@@ -728,14 +733,14 @@ CMP lighting, t.z, lighting, 0; # if in shadow, then no light \n\
 
 void CgUtil::addTexturingSnippet(char* fp){
   if (P_texture>0) {
-    sprintf(fp,"%s%s",fp,"\n\n\
+    snprintf(fp, 100000, "%s%s",fp,"\n\n\
 # texture access           \n\
 MAD t, t, TNORM, offset;    \n\
 TEX t, t, texture[0], 2D;    \n\n");
 
     if (P_capping) {
         // overwrite ambient occlusion for close fragments
-    sprintf(fp,"%s\n\
+    snprintf(fp, 100000, "%s\n\
     \n\
 # lighten OC for close frags           \n\
 MAD tmp.x, depth.x, -250, 0.50;   \n\
@@ -750,15 +755,15 @@ LRP t, tmp.x, 1, t;    \n\
     // Add "future" AO prediction (AO not computed yet)
     
     //  Additive prediction:
-    //sprintf(fp,"%sADD t, t, program.env[6].x;\n", fp );
+    //snprintf(fp, 100000, "%sADD t, t, program.env[6].x;\n", fp );
     
     // multiplicative prediction:
-    sprintf(fp,"%sMUL t, t, program.env[6].x;\n", fp );
+    snprintf(fp, 100000, "%sMUL t, t, program.env[6].x;\n", fp );
     
-    sprintf(fp,"%sMAD res, %5.2f, t, res;\n", fp,  P_texture );
+    snprintf(fp, 100000, "%sMAD res, %5.2f, t, res;\n", fp,  P_texture );
     if (P_phong>0.0) {
         // weigth phong with AO light. 
-       sprintf(fp, "%s\nMUL lighting.y,lighting.y, t;\n", fp);
+       snprintf(fp, 100000,  "%s\nMUL lighting.y,lighting.y, t;\n", fp);
     }
 
   } 
@@ -769,43 +774,43 @@ LRP t, tmp.x, 1, t;    \n\
   // apply lighting  
   if ( lighting>0 ) {
     if (P_sem_effect) {
-      sprintf(fp,"%sMAD lighting.x, lighting.x, -1, 1 ;\n",fp );
-//      sprintf(fp,"%sMUL lighting.x, lighting.x, lighting.x ;\n",fp );
-      sprintf(fp,"%s\nMAD lighting.x, %10.8f, lighting.x, %10.8f;\n",fp, lighting, 1-lighting);
-      sprintf(fp,"%sMUL res, lighting.x, res;\n",fp );
+      snprintf(fp, 100000, "%sMAD lighting.x, lighting.x, -1, 1 ;\n",fp );
+//      snprintf(fp, 100000, "%sMUL lighting.x, lighting.x, lighting.x ;\n",fp );
+      snprintf(fp, 100000, "%s\nMAD lighting.x, %10.8f, lighting.x, %10.8f;\n",fp, lighting, 1-lighting);
+      snprintf(fp, 100000, "%sMUL res, lighting.x, res;\n",fp );
     }
     else 
-      sprintf(fp,"%s\nMAD res, lighting.x, %f, res;\n",fp, lighting);
+      snprintf(fp, 100000, "%s\nMAD res, lighting.x, %f, res;\n",fp, lighting);
   }
   
   if (P_col_atoms_sat>0)  {
     if ((P_col_atoms_sat<1)||(P_col_atoms_bri<1)) {
-      sprintf(fp,"%sMAD tmp, %5.3f, basecol,%5.3f;\n",fp
+      snprintf(fp, 100000, "%sMAD tmp, %5.3f, basecol,%5.3f;\n",fp
           ,P_col_atoms_sat*P_col_atoms_bri, (1.0-P_col_atoms_sat)*P_col_atoms_bri );
-      sprintf(fp,"%s%s",fp,"MUL res, res, tmp;\n");
+      snprintf(fp, 100000, "%s%s",fp,"MUL res, res, tmp;\n");
     } else {
-      sprintf(fp,"%s%s",fp,"MUL res, res, basecol;\n");
+      snprintf(fp, 100000, "%s%s",fp,"MUL res, res, basecol;\n");
     }
   } else {
     if (P_col_atoms_bri<1.0)
     {
-      sprintf(fp,"%s%s",fp,"MUL res, res, %5.3f;\n", P_col_atoms_bri );
+      snprintf(fp, 100000, "%s%s",fp,"MUL res, res, %5.3f;\n", P_col_atoms_bri );
     }
   }
   
   if (writeCol) {
     if (P_phong>0) {
-      sprintf(fp,"%s%s",fp,"LRP res, lighting.y, 1, res;\n");
+      snprintf(fp, 100000, "%s%s",fp,"LRP res, lighting.y, 1, res;\n");
     } 
 
     if (writeAlpha) 
-      sprintf(fp,"%s%s",fp,"MOV res.w, nor.z;\n");    
+      snprintf(fp, 100000, "%s%s",fp,"MOV res.w, nor.z;\n");
   } 
   
   
   // UNUSED:
   if ( _border_inside()>0 ) {
-    sprintf(fp,                "%s \n\
+    snprintf(fp, 100000,                 "%s \n\
      MAD tmp2.z, border.x, %f, 1;     \n\
      LRP tmp3, tmp2.z, 0, res;\n\
      CMP res, -tmp2.z,  tmp3, res;\n\
@@ -820,18 +825,18 @@ LRP t, tmp.x, 1, t;    \n\
         
 #if (1)     
      // no AA:
-     sprintf(fp,"%sCMP res, -border.x,  {0,0,0,0}, res;\n",fp);
+     snprintf(fp, 100000, "%sCMP res, -border.x,  {0,0,0,0}, res;\n",fp);
 #else     
      // internal AA:
-     //sprintf(fp,"%sMAD_SAT border.y, -border.x , 10, 1 ;\n",fp);
-     //sprintf(fp,"%sMUL res, border.y, res;\n",fp);
+     //snprintf(fp, 100000, "%sMAD_SAT border.y, -border.x , 10, 1 ;\n",fp);
+     //snprintf(fp, 100000, "%sMUL res, border.y, res;\n",fp);
 #endif
   }
 
   if ( P_fog>0 ) {
-     sprintf(fp,"%sMAD_SAT tmp.x, depth.x,  50, 0;\n",fp);
-     sprintf(fp,"%sMUL tmp.x, tmp.x, %5.4f;\n",fp, P_fog);
-     sprintf(fp,"%sLRP res, tmp.x, {%10.9f,%10.9f,%10.9f,1}, res;\n",fp, P_bg_color_R,P_bg_color_G,P_bg_color_B);
+     snprintf(fp, 100000, "%sMAD_SAT tmp.x, depth.x,  50, 0;\n",fp);
+     snprintf(fp, 100000, "%sMUL tmp.x, tmp.x, %5.4f;\n",fp, P_fog);
+     snprintf(fp, 100000, "%sLRP res, tmp.x, {%10.9f,%10.9f,%10.9f,1}, res;\n",fp, P_bg_color_R,P_bg_color_G,P_bg_color_B);
   }
   
 }
@@ -842,7 +847,7 @@ void CgUtil::addDepthAdjustSnippet(char* fp) {
   
   // DEPTH AWARE
   if ( _border_outside()>0 ) {
-    sprintf(fp,                "%s \n\
+    snprintf(fp, 100000,                 "%s \n\
      MUL tmp3.z,  -border.x,  data.z;\n\
      MAD tmp3.z,  %8.7f , tmp3.z , fragment.position.z;\n\
      CMP depth.x, -border.x, tmp3.z, depth.x;\n\
@@ -854,23 +859,23 @@ void CgUtil::addDepthAdjustSnippet(char* fp) {
   if (P_capping) {
     
     //
-    //sprintf(fp,"%s%s",fp, "MAD tmp.x, depth.x, 0.001, 10;\n");
-    //sprintf(fp,"%s%s",fp, "CMP result.depth, depth.x, tmp.x, depth.x;\n");
+    //snprintf(fp, 100000, "%s%s",fp, "MAD tmp.x, depth.x, 0.001, 10;\n");
+    //snprintf(fp, 100000, "%s%s",fp, "CMP result.depth, depth.x, tmp.x, depth.x;\n");
     //
 
-    sprintf(fp,"%s%s",fp, "ADD result.depth, depth.x, 0.001;\n");  
+    snprintf(fp, 100000, "%s%s",fp, "ADD result.depth, depth.x, 0.001;\n");
   }
   else {
-//    sprintf(fp,"%s%s",fp, "CMP result.depth, depth.x, 0, depth.x;\n");
-    sprintf(fp,"%s%s",fp, "MOV result.depth, depth.x;\n");
+//    snprintf(fp, 100000, "%s%s",fp, "CMP result.depth, depth.x, 0, depth.x;\n");
+    snprintf(fp, 100000, "%s%s",fp, "MOV result.depth, depth.x;\n");
   }
 
-  sprintf(fp,"%s%s",fp,"MUL res, res, t;\n" );
+  snprintf(fp, 100000, "%s%s",fp,"MUL res, res, t;\n" );
 
   float lighting = (!P_sem_effect) ? P_lighting : (1- P_lighting);
 
   if ((P_capping) && ( (lighting>0) ||  (P_phong>0) ) )  {
-    sprintf(fp,"%s\n\
+    snprintf(fp, 100000, "%s\n\
 # Overwrite capped normal    \n\
 CMP nor, depth.x, {0,0,1,0}, nor;\n",
     fp );
@@ -890,7 +895,7 @@ void CgUtil::addDirectLightingSnippet(char* fp) {
   float lighting = (!P_sem_effect) ? P_lighting : (1- P_lighting);
 
   if (lighting>0) {
-    sprintf(fp,"%s%s",fp, " \n\n\
+    snprintf(fp, 100000, "%s%s",fp, " \n\n\
 ## LIGHTING of Normal        \n\
 DP3 lighting.z, nor, LIGHT;        \n\
 MUL tmp.y, -lighting.z, 0.35;        \n\
@@ -899,7 +904,7 @@ CMP lighting.x, lighting.z, tmp.y, lighting.z; \n\n"
   }
   if (P_phong>0.0) {
    // phong
-    sprintf(fp,                "%s\
+    snprintf(fp, 100000,                 "%s\
 ## PHONG \n\
 #ADD hwv, {0,0,+1,0}, LIGHT;\n\
 #DP3 lighting.y, hwv, hwv;\n\
@@ -909,18 +914,18 @@ DP3 lighting.y, nor, hwv;\n", fp);
 
     // compute exponent (TODO: use some sort of EXP funtion)
     for (int i=0; i<(1.0-P_phong_size)*6.0+3; i++)
-      sprintf(fp,"%sMUL lighting.y, lighting.y, lighting.y;\n", fp);
+      snprintf(fp, 100000, "%sMUL lighting.y, lighting.y, lighting.y;\n", fp);
     
     if (P_phong<1.0)
-      sprintf(fp,"%s\nMUL lighting.y,%5.4f,lighting.y;\n", fp, P_phong);
+      snprintf(fp, 100000, "%s\nMUL lighting.y,%5.4f,lighting.y;\n", fp, P_phong);
     
   }
   
   if(P_light_base>0) {
-    sprintf(fp,"%s\nLRP lighting.x,%5.4f, 1, lighting.x; # flatten light \n", fp, P_light_base );
+    snprintf(fp, 100000, "%s\nLRP lighting.x,%5.4f, 1, lighting.x; # flatten light \n", fp, P_light_base );
   }
 
-  sprintf(fp,"%s\nMOV res, %5.4f;\n", fp, 0.0 );
+  snprintf(fp, 100000, "%s\nMOV res, %5.4f;\n", fp, 0.0 );
 
 }
 
@@ -928,19 +933,19 @@ bool CgUtil::shaderHasChanged=false;
 
 bool CgUtil::setStickFragmentProgram(){
 
-  char fp[10096];
+  char fp[100000];
 
   if (shadowmapBuilding) {
     if (!accurateShadowmapBuilding) 
       
-      sprintf(fp,"\
+      snprintf(fp, 100000, "\
 !!ARBfp1.0  \n\
   \n\
 MOV result.color, 1;\n\
 END\n"
       );
       else 
-      sprintf(fp,"\
+      snprintf(fp, 100000, "\
 !!ARBfp1.0  \n\
   \n\
 ATTRIB data = fragment.texcoord;  \n\
@@ -960,7 +965,7 @@ END\n");
   return true;
   }
 
-  sprintf(fp,"\
+  snprintf(fp, 100000, "\
 !!ARBfp1.0\n\
 \n\
 ATTRIB data = fragment.texcoord;  \n\
@@ -970,12 +975,12 @@ ATTRIB offset = fragment.texcoord[3];\n\
 ATTRIB normside = fragment.texcoord[4];\n");
 
   if (!P_cyl_const_color) {
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
 ATTRIB col1 = fragment.color.primary;\n\
 ATTRIB col2 = fragment.color.secondary;\n",fp);
   }
 
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
 PARAM TNORM={%10.9f,%10.9f,0,0};  \n\
 PARAM  mat0 = program.env[0];\n\
 PARAM  mat1 = program.env[1];\n\
@@ -984,14 +989,14 @@ PARAM  mat2 = program.env[2];\n",fp,
   (moltextureCanvas.GetHardRes()==0)?0:1.0f/moltextureCanvas.GetHardRes() 
 );
   if (P_use_shadowmap())
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
 PARAM  Smat0  = program.env[3];   \n\
 PARAM  Smat1  = program.env[4];   \n\
 PARAM  Smat2  = program.env[5];   \n\
 #PARAM  ratio  = program.env[6];   \n\
 ATTRIB origpos = fragment.texcoord[4];  \n",fp);
 
-   sprintf(fp,"%s\n\
+   snprintf(fp, 100000, "%s\n\
 PARAM LIGHT= state.light[0].position ;  \n\
 PARAM hwv  = state.light[0].half;\n\
 \n\
@@ -1008,7 +1013,7 @@ MAD depth.x, -tmp.z, 0.005, fragment.position.z; \n\
 ", fp);
 
   if ( (_border_outside()>0 ) ) {
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 #CMP border.x, n.y, n.y, -n.y;  \n\
 MAD border.x, data.x, data.x, -1; \n\
 #ADD border.x, 1, -border.x;  \n\
@@ -1017,7 +1022,7 @@ MAD border.x, data.x, data.x, -1; \n\
   
   addDepthAdjustSnippet(fp);
 
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 # Compute normal\n\
 MUL nor, n.y, normcenter;\n\
 MAD nor, data.x, normside, nor;\n\
@@ -1025,7 +1030,7 @@ MAD nor, data.x, normside, nor;\n\
 
   addDirectLightingSnippet(fp);
    
-  sprintf(fp,"%s\n\
+  snprintf(fp, 100000, "%s\n\
 #TEXTURING ON STICKS  \n\
 \n\
 # FIND X (along axis) \n\
@@ -1063,18 +1068,18 @@ KIL -t.w;\n\
   };
   
   if ((P_col_atoms_sat>0) && (P_col_atoms_bri>0)) {
-    if (P_cyl_const_color) sprintf(fp,"%sMOV basecol, {%10.9f,%10.9f,%10.9f,1};\n", 
+    if (P_cyl_const_color) snprintf(fp, 100000, "%sMOV basecol, {%10.9f,%10.9f,%10.9f,1};\n",
         fp,P_cyl_const_color_R, P_cyl_const_color_G, P_cyl_const_color_B);
     else if (P_cyl_smooth_color) {
-      sprintf(fp,"%sMAD t.z, t.x, 0.5,0.5;\n",fp);
-      sprintf(fp,"%sLRP basecol, t.z, col1,col2;\n",fp);
+      snprintf(fp, 100000, "%sMAD t.z, t.x, 0.5,0.5;\n",fp);
+      snprintf(fp, 100000, "%sLRP basecol, t.z, col1,col2;\n",fp);
     } else 
-      sprintf(fp,"%sCMP basecol, t.x, col2,col1;\n",fp);
+      snprintf(fp, 100000, "%sCMP basecol, t.x, col2,col1;\n",fp);
   }
 
   if (P_texture>0) {
    float sidex=BSIZE, sidey=CSIZE;
-    sprintf(fp,"%s\n\
+    snprintf(fp, 100000, "%s\n\
 MAD t, t, {%5.2f, %5.2f, 0,0},          \n\
           {%5.2f, %5.2f, 0,0};           \n\
 #FRC t, t; \n\
@@ -1086,8 +1091,8 @@ fp,
   
   addTexturingSnippet(fp);
 
-  sprintf(fp,"%s%s",fp,"ADD result.color, res, {0,0,0,1};\n\n");    
-  sprintf(fp,"%s%s",fp,"END\n");
+  snprintf(fp, 100000, "%s%s",fp,"ADD result.color, res, {0,0,0,1};\n\n");
+  snprintf(fp, 100000, "%s%s",fp,"END\n");
 
 /*#MOV result.color, n.y;\n\
 #MUL tmp.y, data.y, 8;\n\
@@ -1112,9 +1117,9 @@ bool CgUtil::setStickVertexProgram(){
 no! -> TC4 = POSITION of proj. over axis (for shadowmap)
        TC4 = DIRECTION of normal of side point
   */
- char vp[10096];
+ char vp[100000];
  
- sprintf(vp,"\
+ snprintf(vp, 100000, "\
 !!ARBvp1.0\n\
 \n\
 ATTRIB pos = vertex.position;\n\
@@ -1131,19 +1136,19 @@ TEMP p,tmp,tmp2, d,dr, dataout, disp, disp2, norm, normside; \n\
 \n\
 ");
  if (P_texture>0)
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # pass down texture offest \n\
 MOV result.texcoord[3], vertex.texcoord[2];\n\
 \n\
 ", vp);
 
  if ((P_col_atoms_sat>0) && (P_col_atoms_bri>0))
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 MOV result.color.primary, vertex.color.primary;\n\
 MOV result.color.secondary, vertex.color.secondary;\n\
 ",vp);
 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # Project direction View frame.\n\
 DP3 d.x, matM[0], dire;\n\
 DP3 d.y, matM[1], dire;\n\
@@ -1151,7 +1156,7 @@ DP3 d.z, matM[2], dire;\n\
 \n\
 ",vp);
 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # find k = 1/sqrt(d.x^2+d.y^2)  (= tmp.w) \n\
 MUL tmp.w, d.x, d.x;        \n\
 MAD norm.z,  d.y, d.y, tmp.w; \n\
@@ -1167,7 +1172,7 @@ RSQ tmp.w, norm.z;            \n\
 ",vp);
 
  if (!shadowmapBuilding)
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # find normal = ( dr.z*Bx - dr.x*Bz ) = k* (-dx*dz, -dy*dz, dx^2+dy^2)\n\
 MUL norm.x,  -d.x, d.z;\n\
 MUL norm.y,  -d.y, d.z;\n\
@@ -1179,7 +1184,7 @@ MUL norm, norm, tmp.x;\n\
 \n\
 ",vp);
 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # radius r (=tmp.z) = Raduis*GlobalScaleFactor \n\
 MUL tmp.z, program.env[0].y, program.env[0].x; \n\
 \n\
@@ -1194,7 +1199,7 @@ MOV dataout, data;\n\
 
   
  if (!shadowmapBuilding)
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # pre-compute Z offset \n\
 \n\
 # dataout.z = R*(sen*sen/cos+cos) = R*(z*z*k+1/k) \n\
@@ -1213,7 +1218,7 @@ MUL dataout.w, dataout.w, program.env[0].z; # (i.e. rad*2)\n\
 
   // Further enlarge impostors at sides to include borders
   if (_border_outside()!=0) // Compute 'almost' radius and scale indep. border 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 #MUL tmp.z, program.env[0].y, program.env[0].x; \n\
 RSQ tmp.x,  tmp.z ;\n\
 #MUL tmp.x,  tmp.x,  tmp.x; # Comment to 'almost'\n\
@@ -1224,7 +1229,7 @@ MUL dataout.x, dataout.x, tmp.x ;\n\
  vp, _border_outside()   ); 
 
  if (!shadowmapBuilding)
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 # extend cylinder on bottom do deal with ends \n\
 MUL tmp.x, -data.y, dataout.w;\n\
 SGE tmp.x, tmp.x, 0;\n\
@@ -1235,11 +1240,11 @@ MUL tmp.x, tmp.x, tmp2.x; \n\
 MUL tmp.x, 0.5, tmp.x; \n\
 MAD tmp, dire, tmp.x, pos; \n\
 ",vp);
- else sprintf(vp,"%s\
+ else snprintf(vp, 100000, "%s\
 MOV tmp, pos; \n\
 ",vp);
 
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 \n\
 # Project point in View frame.\n\
 MOV tmp.w, 1; \n\
@@ -1254,7 +1259,7 @@ MAD result.position, dataout.x, disp2, p;  \n\
  
   // Compute normal at side points
  if (!shadowmapBuilding)
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 MOV result.texcoord[0], dataout;\n\
 MOV result.texcoord[1], norm;\n\
 XPD normside, d, norm;\n\
@@ -1267,7 +1272,7 @@ MOV result.texcoord[4], normside;\n\
 ",vp);
 
  if (P_texture>0)
- sprintf(vp,"%s\
+ snprintf(vp, 100000, "%s\
 #ROTATE start vector;\n\
 DP3 tmp.x, matM[0], startp;\n\
 DP3 tmp.y, matM[1], startp;\n\
@@ -1303,12 +1308,12 @@ MOV result.texcoord[2], tmp;\n\
 /*
 // Not needed
  if (P_use_shadowmap())
- sprintf(vp,"\%s\n\
+ snprintf(vp, 100000, "\%s\n\
 MOV result.texcoord[4], pos;\n\
 ",vp);
 */
 
- sprintf(vp,"\%s\n\
+ snprintf(vp, 100000, "\%s\n\
 END\n\
 ",vp);
 
@@ -1322,10 +1327,10 @@ END\n\
 
 bool CgUtil::setBallFragmentProgram(){
   CgUtil::shaderHasChanged=true;
-  char fp[10096];
+  char fp[100000];
   
   if (shadowmapBuilding) {
-      sprintf(fp,"\
+      snprintf(fp, 100000, "\
 !!ARBfp1.0  \n\
   \n\
 ATTRIB data = fragment.texcoord;  \n\
@@ -1335,14 +1340,14 @@ MAD tmp.x, data.x, data.x, -1;  \n\
 MAD tmp.x, data.y, data.y, tmp.x;  \n\
 KIL -tmp.x;");
       if (accurateShadowmapBuilding) 
-        sprintf(fp,"%s\
+        snprintf(fp, 100000, "%s\
 RSQ tmp.x, tmp.x;  \n\
 RCP tmp.x, tmp.x;  \n\
 MUL tmp.x, tmp.x, data.z; \n\
 MAD result.depth, -tmp.x, 0.005, fragment.position.z;\n"
 ,fp);
 
-      sprintf(fp,"\
+      snprintf(fp, 100000, "\
 %sMOV result.color, 1;\n\
 END\n",fp);
       
@@ -1359,7 +1364,7 @@ END\n",fp);
 // #                          #
 // ############################
 
-  sprintf(fp,"\
+  snprintf(fp, 100000, "\
 !!ARBfp1.0  \n\
   \n\
 ATTRIB data = fragment.texcoord;  \n\
@@ -1367,7 +1372,7 @@ ATTRIB offset = fragment.texcoord[2];\n\
 ATTRIB basecol = fragment.color;  \n\
 ");
   if (P_use_shadowmap())
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
 PARAM  Smat0  = program.env[3];   \n\
 PARAM  Smat1  = program.env[4];   \n\
 PARAM  Smat2  = program.env[5];   \n\
@@ -1375,7 +1380,7 @@ PARAM  Smat2  = program.env[5];   \n\
 ATTRIB origpos = fragment.texcoord[3];  \n\
 ",fp);
 
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
   \n\
 TEMP tmp,tmp2,tmp3, t,t0,t1,t2,nor,n,nabs,nsign,disp,res,depth,\n\
      lighting, border, posScreen;  \n\
@@ -1393,13 +1398,13 @@ PARAM  mat2 = program.env[2];\n\
   (moltextureCanvas.GetHardRes()==0)?0:1.0f/moltextureCanvas.GetHardRes(), 
   (moltextureCanvas.GetHardRes()==0)?0:1.0f/moltextureCanvas.GetHardRes() );
 
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
 MOV nor, data;  \n"
   ,fp);
   
   // tentativo prospettiva figa
   if ((projmode==PERSPECTIVE)&&(proj_figa)) {
-/*  sprintf(fp,"%s\
+/*  snprintf(fp, 100000, "%s\
 MAD tmp, fragment.position, {0.00390625, 0.00390625, 0,0}, {-1,-1,0,0};  \n\
 DP4 tmp.x, tmp, data;  \n\
 MUL tmp.x, tmp.x, 0.5;  \n\
@@ -1409,7 +1414,7 @@ MAD data.xy, data, tmp.x, data;  \n\
     
   }
   
-  sprintf(fp,"%s\
+  snprintf(fp, 100000, "%s\
 MUL tmp, data, data;  \n\
 MOV tmp.z, 1;          \n\
 DP3 border.x, tmp, {1,1,-1,0};  \n" // border.x = ( (x^2+y^2)-1 )
@@ -1418,16 +1423,16 @@ DP3 border.x, tmp, {1,1,-1,0};  \n" // border.x = ( (x^2+y^2)-1 )
   // 1.20*.120 -1 = 0.44
   
 if (_border_outside()>0) {
-sprintf(fp,"%s\n\n\
+snprintf(fp, 100000, "%s\n\n\
 ADD tmp2.y, -border.x, data.w;  # allow for border (part ii)  \n\
 #MAD tmp2.y, data.z, -border.x, %7.5f;\n\
 #MAD tmp2.y, data.z, tmp2.y, %7.5f;\n\
 KIL tmp2.y;  \n\
 ",fp, -2*_border_outside(), _border_outside()*_border_outside());
 }
-else sprintf(fp,"%s\n\nKIL -border.x;  \n",fp);
+else snprintf(fp, 100000, "%s\n\nKIL -border.x;  \n",fp);
 
-sprintf(fp,"%s\
+snprintf(fp, 100000, "%s\
   \n\
 RSQ tmp2.y, border.x;  \n\
 RCP tmp2.x, tmp2.y;  \n\
@@ -1439,7 +1444,7 @@ MAD tmp2.y, tmp2.x, data.z, 0;  # note: add an extra range of 0 \n\
   
   
 /*  if (projmode==PERSPECTIVE) //  new_z = old_z / (1/W) + sph_z * W
-    sprintf(fp,"%s%s",fp,"\
+    snprintf(fp, 100000, "%s%s",fp,"\
 MUL tmp2.y, tmp2.y,  fragment.position.w;  \n\
 MAD depth.x, fragment.position.z, data.w, -tmp2.y; # prospettiva: new_z = old_z + 0.005*sph_z\n\
 MUL depth.x, depth.x, 0.1; \n\
@@ -1447,7 +1452,7 @@ MUL depth.x, depth.x, 0.1; \n\
   else*/  
   
   //  new_z = old_z + 0.005*sph_z
-    sprintf(fp,"%s%s",fp, "\
+    snprintf(fp, 100000, "%s%s",fp, "\
 MAD depth.x, -tmp2.y, 0.005, fragment.position.z; # ortho \n\
 ");
 
@@ -1455,7 +1460,7 @@ MAD depth.x, -tmp2.y, 0.005, fragment.position.z; # ortho \n\
   
   if ((P_texture>0)|| (P_use_shadowmap())) {
 
-  sprintf(fp,"%s%s",fp," \n\n\
+  snprintf(fp, 100000, "%s%s",fp," \n\n\
 # rotate normal           \n\
 DP3 n.x, mat0, nor;        \n\
 DP3 n.y, mat1, nor;         \n\
@@ -1471,7 +1476,7 @@ MOV n.w, 0;                   \n\n");
   
   if (P_texture>0) {
     if (textmode==USE_CUBE) 
-    sprintf(fp,     "%s      \n\n\
+    snprintf(fp, 100000,      "%s      \n\n\
 ## TEXTURING CUBEMAP STYLE    \n\
 #                              \n\
 # project on cube: find face    \n\
@@ -1501,7 +1506,7 @@ MAD t, t, {%5.2f,%5.2f,0,0}, {%5.2f, %5.2f, 0,0};  \n\
 MAD t, {%5.2f,%5.2f,0,0}, disp, t;            \n\n",
   fp, CSIZE-gap*2.0, CSIZE-gap*2.0, gap, gap, CSIZE, CSIZE  );
   
-    else  sprintf(fp,     "%s\n\n\
+    else  snprintf(fp, 100000,      "%s\n\n\
 ## TEXTURING OCTAMAP STYLE    \n\
 #                              \n\
 CMP nabs, n, -n, n;             \n\
@@ -1522,8 +1527,8 @@ CSIZE/2.0 - gap, CSIZE/2.0 - gap, CSIZE/2.0, CSIZE/2.0);
 
   addTexturingSnippet(fp);
   
-  sprintf(fp,"%s%s",fp,"ADD result.color, res, {0,0,0,1};\n\n"); 
-  sprintf(fp,"%s%s",fp,"END\n");
+  snprintf(fp, 100000, "%s%s",fp,"ADD result.color, res, {0,0,0,1};\n\n");
+  snprintf(fp, 100000, "%s%s",fp,"END\n");
 
   glProgramStringARB(GL_FRAGMENT_PROGRAM_ARB, GL_PROGRAM_FORMAT_ASCII_ARB, strlen(fp), fp);  
   

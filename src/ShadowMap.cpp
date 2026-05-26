@@ -1,14 +1,21 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
+
+
 //#include <SDL/SDL.h>
 
 typedef unsigned char Byte;
 typedef unsigned int uint;
 
-#include <GL/glew.h>
 #include "CgUtil.h"
 
-//#include <GL/gl.h>
 #include <math.h>
-//#include <GL/glu.h>
+
+
 
 #include <vector>
 
@@ -493,7 +500,7 @@ void ShadowMap::GetCurrentPVMatrix(){
   C=vcg::Transpose( C );
 
   Matrix44f P = C*B;
-  P=vcg::Invert( P );
+  P=vcg::Inverse( P );
   Matrix44f res =  A*P;
   
   Matrix44f mul;

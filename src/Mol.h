@@ -1,3 +1,16 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
+#include <string>
+#include <vector>
+#include <vcg/space/point3.h>
+#include <vcg/space/color4.h>
+
+using namespace std;
+using namespace vcg;
 
 class MyString{
 public:
@@ -242,4 +255,3 @@ private:
 };
 
 extern float stick_radius;
-

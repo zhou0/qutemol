@@ -1,11 +1,18 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
+
+
 typedef unsigned char Byte;
 
-#include <GL/glew.h>
 #include "CgUtil.h"
 
-//#include <GL/gl.h>
 #include <math.h>
-//#include <GL/glu.h>
+
+
 
 #include <vector>
 
@@ -73,7 +80,7 @@ void AOgpu::OpenGLSnap()
 AOgpu::AOgpu( Point3f _dir, Mol &m) {
  
   int out=hardSettings.TSIZE*hardSettings.TSIZE;
-  glClearColor((out&&255)/255.0 , ((out>>8)&&255)/255.0, (out>>16)/255.0, 0    );
+  glClearColor((out&255)/255.0 , ((out>>8)&255)/255.0, (out>>16)/255.0, 0    );
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   dir=_dir.Normalize();
   
@@ -232,5 +239,3 @@ void AOgpu::GetFinalTexture(vector<Byte> &text,Mol &m){
   m.FillTexture( text, sum, hardSettings.TSIZE, 4.0/float(div) /*8*2*255 / (div * areas )*/ );
   m.DuplicateTexels(text, hardSettings.TSIZE); 
 }
-
-

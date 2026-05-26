@@ -1,3 +1,12 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
+#include <vcg/space/point3.h>
+using namespace vcg;
+#include <vector>
 
 class OctaMapSamp{
 public:
@@ -338,6 +347,5 @@ public:
   OctaMapSamp(){ }
 
 };
-
 
 

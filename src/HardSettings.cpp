@@ -1,7 +1,13 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <GL/glew.h>
+#include <GL/glu.h>
+
 #include <stdio.h>
 
 #if defined(_WIN32)
-#include <strings.h>
+#include <string.h>
 #else
 #include <string.h> // for strcmp
 #endif

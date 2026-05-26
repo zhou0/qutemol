@@ -1,4 +1,9 @@
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <GL/glew.h>
+#include <GL/glu.h>
+
 
 typedef unsigned char Byte;
 
@@ -16,7 +21,7 @@ using namespace std;
 #include "Mol.h"
 #include "HardSettings.h"
 
-#include "Progress.h"
+#include "progress.h"
 #include "AtomColor.h"
 
 #include "MyCanvas.h"
@@ -300,7 +305,7 @@ void Mol::FindBonds(){
     
   
   if (showprogress) EndProgress();
-  printf("%d bonds detected!\n",bond.size() );
+  printf("%zd bonds detected!\n", (size_t)bond.size() );
 }
 
 void Mol::SetSpaceFill(){
@@ -651,4 +656,3 @@ QAtom::QAtom(string st){
   covalentr*=0.85; // mystical value!!!
   
 }
-
