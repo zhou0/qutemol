@@ -1,15 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 //
 // qutemol on wxWidgets MAIN 
 //
@@ -437,6 +428,462 @@ bool MyApp::OnInit()
       { wxCMD_LINE_SWITCH, "v", NULL, "don't start, show version name", wxCMD_LINE_VAL_NONE, 0 },
       { wxCMD_LINE_NONE }
     };
+
+    wxCmdLineParser parser(cmdLineDesc, argc, argv);
+
+    parser.Parse();
+
+    InitQuteMol( NULL );
+
+    wxString artFilename;
+    if (parser.Found("v")>0) {
+      FILE *f=fopen("output.txt", "wt");
+      if (f) {
+        fprintf(f,"ver 0.4.1");
+        fclose(f);
+      }
+      exit(0);
+    }
+
+    if (parser.Found("a",&artFilename)>0) {
+      if (!readArtFile(artFilename.ToAscii())) {
+        wxMessageBox(
+          wxString(_T("Error reading art file \"") + artFilename +"\""),
+          _T("Error reading art file"),
+          wxOK | wxICON_EXCLAMATION, frame);
+        exit(0);
+        return false;
+      }
+    }
+
+    if (parser.GetParamCount()>0)  frame->OnReadFile(parser.GetParam(0));
+/*      InitQuteMol( parser.GetParam(0).mb_str(wxConvUTF8) );
+    } else {
+      InitQuteMol( NULL );
+    }*/
+
+    /* Show the frame */
+
+    frame->Center();
+    frame->SetDropTarget( new MyDropTarget(frame) );
+    frame->Show(true);
+
+    return true;
+}
+void MyFrame::ResetAO(){
+  mol.ResetAO();
+}
+
+
+IMPLEMENT_APP(MyApp)
+
+BEGIN_EVENT_TABLE(MyFrame, wxFrame)
+    //EVT_PAINT(MyFrame::OnPaint)
+#if defined(_WIN32)
+   EVT_ERASE_BACKGROUND(MyFrame::OnEraseBackground)
+#endif
+    EVT_SIZE(MyFrame::OnSize)
+    EVT_BUTTON(OpenButton, MyFrame::OnOpenFile)
+    EVT_BUTTON(SnapButton, MyFrame::OnSaveSnap)
+    EVT_BUTTON(QuitButton, MyFrame::OnExit)
+    EVT_KEY_DOWN(MyFrame::OnKeyDown)
+    EVT_KEY_UP(MyFrame::OnKeyUp)
+    EVT_IDLE(MyFrame::OnIdle)
+END_EVENT_TABLE()
+
+
+BEGIN_EVENT_TABLE(MyToolbar, wxPanel)
+   EVT_MOUSE_EVENTS(MyToolbar::OnDrag)
+END_EVENT_TABLE()
+
+
+void MyFrame::OnKeyUp( wxKeyEvent& event ){
+  m_canvas->OnKeyUp(event);
+}
+
+void MyFrame::OnKeyDown( wxKeyEvent& event ){
+  m_canvas->OnKeyDown(event);
+}
+
+
+/* My frame constructor */
+MyFrame::MyFrame(wxFrame *frame, const wxString& title, const wxPoint& pos,
+    const wxSize& size, long style)
+    : wxFrame(frame, wxID_ANY, title, pos, size, style)
+{
+    m_canvas = NULL;
+    m_tb= NULL;
+#ifndef __DARWIN__
+		SetIcon(wxIcon(_T("sample"),wxBITMAP_TYPE_ICO_RESOURCE,32,32));
+#endif
+    resize_mode=NATURAL;
+}
+
+//void MyFrame::OnPaint( wxPaintEvent& event )
+//{
+//  wxFrame::OnPaint(event);
+//}
+
+
+void MyFrame::OnSize(wxSizeEvent& event){
+
+  int w,h;
+  GetClientSize(&w,&h);
+  int hlogo = m_tb->topsizer->GetMinSize().y + 40;
+  if (MyTab::Redispose(h - hlogo )) {
+    GetToolbar()->SetSize(200,winy);
+  }
+
+  if (resize_mode==FORCED ) {
+    // TODO: fullscreen resize
+    //m_canvas->;
+    //m_tb->;
+    resize_mode=NATURAL;
+    wxFrame::OnSize(event);
+    //m_tb->Fit();
+    //m_tb->GetSizer()->RecalcSizes();
+    //GetSizer()->RecalcSizes();
+    //notebook->Layout();
+    //notebook->SetSize(100,100);
+    //m_tb->SetSize(100,100);
+    //notebook->GetSizer()->RecalcSizes();;
+    //m_tb->Layout();
+    //Layout();
+//    Fit();
+  } else
+  if (resize_mode==NATURAL ) {
+    wxFrame::OnSize(event);
+    /*
+    GetClientSize(&w,&h);
+    int tbsize=GetToolbar()->GetEffectiveMinSize().x;
+    winx=w-tbsize;
+    winy=h;
+
+    GetToolbar()->SetPosition( wxPoint(winx,0) );
+    GetToolbar()->SetSize(tbsize,winy);
+    GetCanvas()->SetSize(winx,winy);
+   */
+    resize_mode=CUSTOM;
+  }
+  else {
+
+  static int oldw=0,oldh=0;
+
+
+  int w1=m_tb->GetEffectiveMinSize().x;
+  //
+
+  int sx=w-w1, sy=h , s;
+
+  if ((oldw==w) && (oldh!=h)) s=sy; else
+  if ((oldh==h) && (oldw!=w)) s=sx; else
+    s=(sx+sy)/2;
+
+  wxSize size=wxSize(s+w1, s);
+  resize_mode=NATURAL;
+  SetClientSize(size);
+
+  //wxFrame::OnSize( event );
+  //wxSizeEvent event2=wxSizeEvent(size);
+  //wxFrame::OnSize(event2);
+
+  //oldw=w;oldh=h;
+  }
+}
+
+void MyFrame::Maximize(bool max){
+
+  //if (custom_resizing) {
+    resize_mode=FORCED;
+    wxFrame::Maximize(max);
+  //}
+}
+
+/* Intercept menu commands */
+void MyFrame::OnExit( wxCommandEvent& WXUNUSED(event) )
+{
+    Close();
+}
+
+BEGIN_EVENT_TABLE(TestGLCanvas, wxGLCanvas)
+    EVT_SIZE(TestGLCanvas::OnSize)
+    EVT_PAINT(TestGLCanvas::OnPaint)
+    EVT_ERASE_BACKGROUND(TestGLCanvas::OnEraseBackground)
+    EVT_MOUSE_EVENTS(TestGLCanvas::OnMouse)
+    EVT_KEY_DOWN(TestGLCanvas::OnKeyDown)
+    EVT_KEY_UP(TestGLCanvas::OnKeyUp)
+END_EVENT_TABLE()
+
+TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
+    const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+    : wxGLCanvas(_parent, id, pos, size, style|wxFULL_REPAINT_ON_RESIZE, name)
+{
+  initdone=false;
+  shownHQ=false;
+}
+
+TestGLCanvas::~TestGLCanvas()
+{
+}
+
+
+wxString errorMSG(int errcode){
+  wxString res;
+  res=_T("OpenGL problems:\n\n");
+  if (errcode&ERRGL_NO_GLEW) {
+    res+=_T(" - cannot initialize GLEW:\n   ");
+    res+= wxString::FromAscii(CgUtil::lasterr);
+    res+=_T("\n");
+  }
+  if (errcode&ERRGL_NO_FS) res+=_T(" - no Programmable Fragment Shader found\n");
+  if (errcode&ERRGL_NO_VS) res+=_T(" - no Programmable Vertex Shader found\n");
+  if (errcode&ERRGL_NO_FBO_SHADOWMAP) res+=_T(" - cannot initialize FrameBufferObject for shadowmaps\n");
+  if (errcode&ERRGL_NO_FBO_HALO) res+=_T(" - cannot initialize FrameBufferObject for halos\n");
+  if (errcode&ERRGL_NO_FBO_HALO) res+=_T(" - cannot initialize FrameBufferObject for A.O. computation\n");
+  res+=_T("\n(Hint: update graphic card drivers)");
+  return res;
+}
+
+void TestGLCanvas::OnPaint( wxPaintEvent& event )
+{
+
+
+    /* must always be here */
+    wxPaintDC dc(this);
+
+#ifndef __WXMOTIF__
+    if (!GetContext()) return;
+#endif
+
+    SetCurrent();
+
+    if (!initdone) {
+      static bool once=false;
+      if (!once) {
+        once=true;
+        int errcode=initGl();
+        if (errcode!=ERRGL_OK){
+          wxMessageBox(errorMSG(errcode), _T("Unrecoverable error: Problems initializing graphics"), wxOK | wxICON_EXCLAMATION, this);
+          exit(0);
+          }
+        else initdone=true;
+      }
+    }
+
+    if (!initdone) wxGLCanvas::OnPaint(event); else
+    if (mol.IsReady()) {
+      if (mustDoHQ) {
+        drawFrame( hardSettings.STILL_QUALITY );
+        shownHQ=true;
+        mustDoHQ=false;
+      } else {
+        drawFrame( hardSettings.MOVING_QUALITY );
+        shownHQ=false;
+      }
+      SwapBuffers();
+    }
+    else {
+      clearFrame();
+      SwapBuffers();
+    }
+}
+
+void TestGLCanvas::OnSize(wxSizeEvent& event)
+{
+
+    // this is also necessary to update the context on some platforms
+    wxGLCanvas::OnSize(event);
+
+    // set GL viewport (not called by wxGLCanvas::OnSize on all platforms...)
+
+    GetClientSize(&winx, &winy);
+    mainCanvas.SetVideoSize(winx);
+#ifndef __WXMOTIF__
+    if ( GetContext() )
+#endif
+    {
+        SetCurrent();
+        glViewport(0, 0, (GLint) winx, (GLint) winy);
+    }
+}
+
+
+void MyFrame::OnEraseBackground(wxEraseEvent& event)
+{
+  wxFrame::OnEraseBackground(event);
+    /* Do nothing, to avoid flashing on MSW */
+}
+
+void TestGLCanvas::OnEraseBackground(wxEraseEvent& event)
+{
+  if (!initdone) wxGLCanvas::OnEraseBackground(event);
+    /* Do else do nothing, to avoid flashing on MSW */
+}
+
+bool wxConsumeTrackBallEvent(wxMouseEvent& event, Trackball &track);
+bool wxConsumeTrackBallEvent(wxKeyEvent& event, bool down, Trackball &track);
+
+void TestGLCanvas::OnKeyUp( wxKeyEvent& event ){
+  wxConsumeTrackBallEvent(event,false,track);
+}
+
+extern int CSIZE; // number of texels for a patch of an aotm
+
+void TestGLCanvas::OnKeyDown( wxKeyEvent& event ){
+  wxConsumeTrackBallEvent(event,true,track);
+#ifdef __DARWIN__
+	wxString path = wxStandardPaths::Get().GetResourcesDir() + "/presets/new.preset";
+#else
+	wxString path =  "presets\\new.preset";
+#endif
+  if (event.GetKeyCode() == WXK_F7 ) {
+    cgSettings.Save(path.c_str());
+  }
+
+  if (event.GetKeyCode() == WXK_F6 ) {
+    if (cgSettings.Load(path.c_str())) {
+      MyTab::UpdateAll();
+
+      cgSettings.ResetHalo();
+      cgSettings.UpdateShaders();
+      SceneChanged();
+    }
+
+  }
+
+  if (event.GetKeyCode() == WXK_F5 ) {
+    mol.PrepareAOSingleView();
+    SceneChanged();
+  }
+
+  if (event.GetKeyCode() == WXK_F2 ) {
+    static int status=0;
+    status=(status+1) % 5;
+    draw_balls = (status==0) || (status==1)  || (status==2) ;
+    draw_sticks = (status==0) || (status==1) || (status==3) || (status==4) ;
+    draw_wireframe_balls= (status==1)  ;
+    draw_wireframe_sticks= (status==1)  || (status==3) ;
+
+    SceneChanged();
+  }
+
+  if (event.GetKeyCode() == WXK_F1 ) {
+    wxString text;
+    if (!mol.IsReady() ) text=wxT("(no molecule)");
+    else {
+
+      text=wxString( mol.GetMolName(), wxConvUTF8 ).BeforeLast('.') +
+           wxT("\n (file: \"")+wxString( mol.filename, wxConvUTF8 ) +wxT("\")\n\n");
+
+      text=text+wxString::Format(wxT("%d atoms\n"),mol.atom.size());
+
+      if (mol.sticks) {
+        text=text+wxString::Format(wxT("%d bonds\n"),mol.bond.size());
+      }
+
+
+      text=text+wxString::Format(
+        _T("\nUsing:\n Texture size = %dx%d\n Patch size=%dx%d"),
+        moltextureCanvas.GetHardRes(),
+        moltextureCanvas.GetHardRes(),
+        CSIZE,CSIZE
+      );
+
+
+    }
+    wxMessageBox(text, _T("QuteMol - file info"), wxOK | wxICON_INFORMATION, this);
+  }
+
+  if (event.GetKeyCode() == WXK_F6 ) {
+    use_accurate_halo=!use_accurate_halo;
+    SceneChanged();
+  }
+
+  // temp, should e set auto depending on dist
+  if (event.GetKeyCode() == WXK_F2 ) {
+
+    cgSettings.P_capping=!cgSettings.P_capping;
+    cgSettings.UpdateShaders();
+    SceneChanged();
+  }
+}
+
+
+void MyFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
+{
+}
+
+
+
+void MyFrame::OnSaveSnap (wxCommandEvent & event)
+{
+
+  int sx,sy;
+  static const wxString FILETYPES = _T(
+     "PNG (lossless)|*.png|"
+     "JPEG (lossy)|*.jpg|"
+     "GIF animation|*.gif"
+                  );
+   wxFileDialog * saveSnapDialog =
+       new wxFileDialog ( this,
+                          wxString  (_T("Save a snapshot")),
+                          wxString(), // def path
+                          wxString(),
+                          FILETYPES,
+                          wxSAVE | /*wxCHANGE_DIR |*/ wxOVERWRITE_PROMPT
+                          );
+
+   static int lastFilterIndex=-1;
+
+   if (lastFilterIndex==-1) lastFilterIndex=saveSnapDialog->GetFilterIndex();
+   saveSnapDialog->SetFilterIndex( lastFilterIndex );
+
+   wxString ext;
+   if (lastFilterIndex==1) ext=_T(".jpg");
+   else if (lastFilterIndex==2) ext=_T(".gif");
+   else ext=_T(".png");
+   saveSnapDialog->SetFilename( wxString( mol.GetFilenameSnap(), wxConvUTF8 )+ ext );
+   static wxString CANNOT_SAVE = _T("Could not save snap!\n\nYou might try setting\na lower resolution\nor removing AntiAliasing...");
+   if (saveSnapDialog->ShowModal() == wxID_OK)
+   if ((new savesnapDialog(this,saveSnapDialog->GetFilterIndex()))->ShowModal() == wxID_OK )
+   {
+
+
+      int jj=saveSnapDialog->GetFilterIndex();
+      lastFilterIndex=jj;
+
+      Byte* snap;
+      int AAMult=(hardSettings.SNAP_ANTIALIAS)?2:1;
+      bool useTransp=(hardSettings.PNG_TRANSPARENT==1) && (jj==0);
+      if (jj!=2) {
+
+        sx=sy=hardSettings.SNAP_SIZE*AAMult;
+
+        if ((useTransp) && (cgSettings.UseHalo()>0)) {
+          cgSettings.doingAlphaSnapshot=true;
+          cgSettings.ResetHalo();
+          cgSettings.UpdateShaders();
+        }
+
+        snap= GetSnapshot(sx,sy, useTransp );
+
+        if (cgSettings.doingAlphaSnapshot) {
+          cgSettings.doingAlphaSnapshot=false;
+          cgSettings.ResetHalo();
+          cgSettings.UpdateShaders();
+        }
+        if (!snap) {
+         wxMessageBox(CANNOT_SAVE, _T("OpenGL problems?"), wxOK | wxICON_EXCLAMATION, this);
+         return;
+        }
+     } else sx=sy=hardSettings.GIF_SNAP_SIZE*AAMult;
+     {
+
+       wxString fn=saveSnapDialog->GetPath();
+
+        // fix filename Extension
+        //////////////////////////
+        //wxString ext[3]={   _T("png"),   _T("jpg") ,  _T("png") };
         //wxString cext=fn.AfterLast('.');
         //if (cext.CmpNoCase(ext[0])||cext.CmpNoCase(ext[1])) fn=fn.BeforeLast('.');
         //fn=fn+_T('.')+ext[ jj ];
