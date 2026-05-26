@@ -619,11 +619,13 @@ TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
     : wxGLCanvas(_parent, id, NULL, pos, size, style|wxFULL_REPAINT_ON_RESIZE, name)
 {
   initdone=false;
+  m_context = new wxGLContext(this);
   shownHQ=false;
 }
 
 TestGLCanvas::~TestGLCanvas()
 {
+  delete m_context;
 }
 
 
@@ -655,7 +657,7 @@ void TestGLCanvas::OnPaint( wxPaintEvent& event )
     if (!GetContext()) return;
 #endif
 
-    SetCurrent();
+    SetCurrent(*m_context);
 
     if (!initdone) {
       static bool once=false;
@@ -679,6 +681,7 @@ void TestGLCanvas::OnPaint( wxPaintEvent& event )
       } else {
         drawFrame( hardSettings.MOVING_QUALITY );
         shownHQ=false;
+  m_context = new wxGLContext(this);
       }
       SwapBuffers();
     }
@@ -702,7 +705,7 @@ void TestGLCanvas::OnSize(wxSizeEvent& event)
     if ( GetContext() )
 #endif
     {
-        SetCurrent();
+        SetCurrent(*m_context);
         glViewport(0, 0, (GLint) winx, (GLint) winy);
     }
 }

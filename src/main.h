@@ -39,6 +39,7 @@ class MyToolbar: public wxPanel
 {
 public:
   MyToolbar(wxTopLevelWindow *parent, wxWindowID id = wxID_ANY,
+wxGLContext* m_context;
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxString& name = wxT("ToolBar"));
@@ -134,6 +135,7 @@ public:
     void InitGL();
     
     void SceneChanged(); // redraw!
+    wxGLContext* GetContext() { return m_context; }
  
     bool initdone;
 
