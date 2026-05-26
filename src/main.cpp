@@ -620,17 +620,13 @@ TestGLCanvas::TestGLCanvas(wxWindow *_parent, wxWindowID id,
 {
   initdone=false;
   m_context = new wxGLContext(this);
-  m_context = new wxGLContext(this);
-  m_context = new wxGLContext(this);
   shownHQ=false;
 }
 
 TestGLCanvas::~TestGLCanvas()
 {
   delete m_context;
-  delete m_context;
 }
-
 
 wxString errorMSG(int errcode){
   wxString res;
@@ -835,7 +831,7 @@ void MyFrame::OnSaveSnap (wxCommandEvent & event)
                           wxString(), // def path
                           wxString(),
                           FILETYPES,
-                          wxSAVE | /*wxCHANGE_DIR |*/ wxOVERWRITE_PROMPT
+                          wxFD_SAVE | /*wxCHANGE_DIR |*/ wxFD_OVERWRITE_PROMPT
                           );
 
    static int lastFilterIndex=-1;
@@ -1003,7 +999,7 @@ void MyFrame::OnOpenFile (wxCommandEvent & event)
                           wxString(), // def path
                           wxString(), 
                           FILETYPES,
-                          wxOPEN | wxFILE_MUST_EXIST/*| wxCHANGE_DIR*/,
+                          wxFD_OPEN | wxFD_FILE_MUST_EXIST/*| wxCHANGE_DIR*/,
                           wxDefaultPosition);
 
    if (openFileDialog->ShowModal() == wxID_OK) {
