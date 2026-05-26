@@ -1,9 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #ifdef WIN32
 #include <windows.h>
 #endif
+#include "Common.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -34,7 +35,7 @@ using namespace std;
 #include "Mol.h"
 //#include "AOgpu.h"
 
-#include "Common.h"
+
 #include "HardSettings.h"
 #include "MyCanvas.h"
 

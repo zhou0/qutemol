@@ -113,9 +113,6 @@ bool mustDoHQ=false;
 wxStopWatch sw;
 
 
-#include "gifSave.h"
-
-// defined in pngSave
 
 
 

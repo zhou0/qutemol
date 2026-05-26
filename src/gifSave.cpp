@@ -14,9 +14,27 @@
 
 using namespace std;
 
+#if GIFLIB_MAJOR >= 5
+/* A very simple/naive quantization for missing GifQuantizeBuffer in giflib 5+ */
+extern "C" int GifQuantizeBuffer(int Width, int Height, int *ColorMapSize,
+                      GifByteType *RedInput, GifByteType *GreenInput, GifByteType *BlueInput,
+                      GifByteType *OutputBuffer, GifColorType *OutputColorMap) {
+    for (int i = 0; i < *ColorMapSize; i++) {
+        OutputColorMap[i].Red = (i & 0x07) << 5;
+        OutputColorMap[i].Green = (i & 0x38) << 2;
+        OutputColorMap[i].Blue = (i & 0xC0);
+    }
+    for (int i = 0; i < Width * Height; i++) {
+        OutputBuffer[i] = (RedInput[i] >> 5) | ((GreenInput[i] >> 5) << 3) | ((BlueInput[i] >> 6) << 6);
+    }
+    return GIF_OK;
+}
+#endif
+
 typedef unsigned char Byte;
 
 #include "gifSave.h"
+#include "Common.h"
 
 static vector<vector<GifByteType> > frames;
 static vector<int> delay;
