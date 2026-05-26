@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -12,12 +15,11 @@
 #include <iostream>
 #include <png.h>
 #include "progress.h"
+#include "Common.h"
 
 using namespace std;
 
-typedef unsigned char Byte;
-
-static void downsample2x2(unsigned char * data, int sx, int sy){
+void downsample2x2(unsigned char * data, int sx, int sy){
   int j=0;
   for (int y=0; y<sy/2; y++)
   for (int x=0; x<sx/2; x++)
@@ -32,7 +34,7 @@ static void downsample2x2(unsigned char * data, int sx, int sy){
   }
 }
 
-static void downsample2x2NoAlpha(unsigned char * data, int sx, int sy){
+void downsample2x2NoAlpha(unsigned char * data, int sx, int sy){
   int j=0;
   for (int y=0; y<sy/2; y++)
   for (int x=0; x<sx/2; x++)
@@ -51,9 +53,6 @@ bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
   FILE *fp;
   png_structp png_ptr;
   png_infop info_ptr;
-
-  if (alpha) downsample2x2(data, sx*2, sy*2);
-  else downsample2x2NoAlpha(data, sx*2, sy*2);
 
   fp = fopen(filename, "wb");
   if (fp == NULL) return false;
@@ -96,4 +95,8 @@ bool savePNG(const char *filename, Byte *data, int sx, int sy, bool alpha) {
   png_destroy_write_struct(&png_ptr, &info_ptr);
 
   return true;
+}
+
+bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse) {
+  return savePNG(filename, (Byte*)data, sx, sy, true);
 }

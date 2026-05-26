@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -113,9 +116,6 @@ wxStopWatch sw;
 #include "gifSave.h"
 
 // defined in pngSave
-bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
-void downsample2x2(Byte * data, int sx, int sy);
-void downsample2x2NoAlpha(Byte * data, int sx, int sy);
 
 
 

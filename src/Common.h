@@ -1,6 +1,12 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -17,6 +23,9 @@ long int getTicks();
 
 
 // drawing & geom settings...
+class CgUtil;
+class GeoSettings;
+
 extern CgUtil cgSettings;
 extern GeoSettings geoSettings; // singleton
 
@@ -62,6 +71,7 @@ Byte* GetSnapshot(int sx, int sy, bool alpha);
 //extern Mol mol;
 //extern ShadowMap shadowmap;
 extern CgUtil shadowSettings; 
+extern CgUtil shadowSettingsAcc;
 
 extern  float background;
 
@@ -76,10 +86,9 @@ void ResetColMode();
 
 void ChangeColorSchema(int i=-1);
 
+// PNG related
+bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
+void downsample2x2(Byte * data, int sx, int sy);
+void downsample2x2NoAlpha(Byte * data, int sx, int sy);
 
-
-//extern vector<Byte> texture;
-
-//bool LoadImagePPM( const char * filename , vector<Byte> &im);
-//bool SaveImagePPM( const char * filename , const vector<Byte> &im, int sizex, int sizey);
-
+#endif
