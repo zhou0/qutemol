@@ -39,7 +39,6 @@ class MyToolbar: public wxPanel
 {
 public:
   MyToolbar(wxTopLevelWindow *parent, wxWindowID id = wxID_ANY,
-wxGLContext* m_context;
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxString& name = wxT("ToolBar"));
@@ -140,6 +139,7 @@ public:
     bool initdone;
 
     bool shownHQ;
+    wxGLContext* m_context;
     
 private:
     //wxWindow *parent;
