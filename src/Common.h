@@ -66,6 +66,7 @@ int GetCurrentHetatm();
 int GetCurrentAtm();
 
 void SetTextureAccess(bool bilinear);
+Byte* GetSnapshot(int sx, int sy, bool alpha);
 //void ReloadTexture(vector<Byte> t, bool bilinear);
 
 
