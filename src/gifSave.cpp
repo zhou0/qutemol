@@ -13,9 +13,7 @@
 #include <vector>
 
 using namespace std;
-
 #if (GIFLIB_MAJOR >= 5) && !defined(HAS_GIF_QUANTIZE_BUFFER)
-/* A very simple/naive quantization for missing GifQuantizeBuffer in modern giflib if not provided */
 extern "C" int GifQuantizeBuffer(int Width, int Height, int *ColorMapSize,
                       GifByteType *RedInput, GifByteType *GreenInput, GifByteType *BlueInput,
                       GifByteType *OutputBuffer, GifColorType *OutputColorMap) {
@@ -31,10 +29,10 @@ extern "C" int GifQuantizeBuffer(int Width, int Height, int *ColorMapSize,
 }
 #endif
 
+
 typedef unsigned char Byte;
 
 #include "gifSave.h"
-#include "Common.h"
 
 static vector<vector<GifByteType> > frames;
 static vector<int> delay;
@@ -98,7 +96,7 @@ bool GifWrapper::Save(const char* filename){
       if (EGifPutLine(GifFile, &(frames[ni][j]), gifsx) == GIF_ERROR) return false;
     }
   }
-#if (GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1) || GIFLIB_MAJOR > 5
+#if GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1 || GIFLIB_MAJOR > 5
   if (EGifCloseFile(GifFile, &error) == GIF_ERROR) return false;
 #else
   if (EGifCloseFile(GifFile) == GIF_ERROR) return false;

@@ -13,7 +13,6 @@
 #include <GL/glu.h>
 
 #include <vector>
-
 extern int winx, winy;
 
 typedef unsigned char Byte;
@@ -22,6 +21,8 @@ typedef unsigned char Byte;
 //void swapbuffers();
 //void refresh();
 long int getTicks();
+
+
 
 // drawing & geom settings...
 class CgUtil;
@@ -67,7 +68,6 @@ int GetCurrentAtm();
 void SetTextureAccess(bool bilinear);
 //void ReloadTexture(vector<Byte> t, bool bilinear);
 
-Byte* GetSnapshot(int sx, int sy, bool alpha);
 
 //extern Mol mol;
 //extern ShadowMap shadowmap;
@@ -87,9 +87,9 @@ void ResetColMode();
 
 void ChangeColorSchema(int i=-1);
 
-// PNG related
+// PNG and other exported functions
 bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
-void downsample2x2(Byte * data, int sx, int sy);
-void downsample2x2NoAlpha(Byte * data, int sx, int sy);
+void downsample2x2(unsigned char * data, int sx, int sy);
+void downsample2x2NoAlpha(unsigned char * data, int sx, int sy);
 
 #endif
