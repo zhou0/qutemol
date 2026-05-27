@@ -494,7 +494,7 @@ void Mol::DrawShadowmap(bool invert){
 
     /*if (invert) {
     glScalef(1,1,-1);
-    }*/
+    }
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -658,7 +658,7 @@ void FillRedTexture(){
     texture[k++]=0;
     texture[k++]=120;
   }
-}*/
+}
 
 void FillShadedTexture(){
 //  OctaMapSamp s(CSIZE);
@@ -886,7 +886,7 @@ void drawFrame() {
     } else {
       // write depth in depthbuffer
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    }*/
+    }
 
 
   mainCanvas.SetAsOutput();
@@ -1034,7 +1034,7 @@ void ReloadTexture(vector<Byte> t, bool bilinear){
 
 
   SetTextureAccess(bilinear);
-}*/
+}
 
 int initGl(){
 
@@ -1082,22 +1082,22 @@ Point3f RandomUnitVec(){
 
 long int globaltime,startingtime;
 
-void StartTime();/*{
+void StartTime(){
   startingtime=globaltime=getTicks();
-}*/
+}
 
-long int TakeTime(FILE *f , char *st);/*{
+long int TakeTime(FILE *f , char *st){
   long int timen=getTicks(), delta=timen-globaltime;
   fprintf(f,"%5dmsec: %s\n",delta,st);
   globaltime=timen;
   return delta;
-}*/
-/*long int TakeTotalTime(){
+}
+long int TakeTotalTime(){
   long int timen=getTicks(), delta=timen-startingtime;
   printf("------------------\nTotal time: %5dmsec\n",delta);
   globaltime=timen;
   return delta;
-}*/
+}
 
 float myfabs(float a){
   return (a<0)?-a:a;
@@ -1128,7 +1128,7 @@ int InitQuteMol(const char * filename)
   /*if (!initGl()) {
     printf("failed to initialize! :(\n");
     return 0;
-  }*/
+  }
 
   //FillRandomTexture();
   //mol.DuplicateTexels(texture, TSIZE);

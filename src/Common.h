@@ -31,7 +31,6 @@ class GeoSettings;
 extern CgUtil cgSettings;
 extern GeoSettings geoSettings; // singleton
 
-extern bool bilinear;
 extern bool MovingLightMode;
 
 extern bool draw_balls; // just to test
@@ -70,12 +69,11 @@ Byte* GetSnapshot(int sx, int sy, bool alpha);
 //void ReloadTexture(vector<Byte> t, bool bilinear);
 
 
-//extern Mol mol;
-//extern ShadowMap shadowmap;
+extern class Mol mol;
+extern class ShadowMap shadowmap;
 extern CgUtil shadowSettings; 
 extern CgUtil shadowSettingsAcc;
 
-extern  float background;
 
 void StartTime();
 long int TakeTime(FILE *f, char *st);
