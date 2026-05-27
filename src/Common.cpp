@@ -886,7 +886,7 @@ void drawFrame() {
     } else {
       // write depth in depthbuffer
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    }
+    }*/
 
 
   mainCanvas.SetAsOutput();

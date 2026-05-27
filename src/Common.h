@@ -27,6 +27,8 @@ long int getTicks();
 // drawing & geom settings...
 class CgUtil;
 class GeoSettings;
+class Mol;
+class ShadowMap;
 
 extern CgUtil cgSettings;
 extern GeoSettings geoSettings; // singleton
@@ -69,8 +71,8 @@ Byte* GetSnapshot(int sx, int sy, bool alpha);
 //void ReloadTexture(vector<Byte> t, bool bilinear);
 
 
-extern class Mol mol;
-extern class ShadowMap shadowmap;
+extern Mol mol;
+extern ShadowMap shadowmap;
 extern CgUtil shadowSettings; 
 extern CgUtil shadowSettingsAcc;
 
@@ -88,7 +90,7 @@ void ChangeColorSchema(int i=-1);
 
 // PNG and other exported functions
 bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
-void downsample2x2(unsigned char * data, int sx, int sy);
-void downsample2x2NoAlpha(unsigned char * data, int sx, int sy);
+void downsample2x2(Byte * data, int sx, int sy);
+void downsample2x2NoAlpha(Byte * data, int sx, int sy);
 
 #endif
