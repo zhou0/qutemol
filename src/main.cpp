@@ -117,7 +117,7 @@ wxStopWatch sw;
 
 #include "gifSave.h"
 
-// defined in pngSave
+void downsample2x2NoAlpha(Byte * data, int sx, int sy);
 
 
 
@@ -182,6 +182,7 @@ public:
 
     virtual bool OnDropFiles(wxCoord x, wxCoord y,  const wxArrayString& filenames){
       parent->OnReadFile(filenames[0]);
+      return true;
     };
 
 private:
