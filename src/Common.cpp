@@ -1,9 +1,10 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #ifdef WIN32
 #include <windows.h>
 #endif
+#include "Common.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -769,6 +770,7 @@ bool Mol::PrepareAOSingleView(){
   i++; if (i>DirV.size()) i=0;
   AOgpu2::UnBind();
   AOdoneLvl=DirV.size();
+  return true;
 }
 
 bool Mol::PrepareAOstep(int nsteps){
