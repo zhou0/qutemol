@@ -21,7 +21,7 @@
 
 using namespace std;
 
-void downsample2x2(unsigned char * data, int sx, int sy){
+void downsample2x2(Byte * data, int sx, int sy){
   int j=0;
   for (int y=0; y<sy/2; y++)
   for (int x=0; x<sx/2; x++)
@@ -36,7 +36,7 @@ void downsample2x2(unsigned char * data, int sx, int sy){
   }
 }
 
-void downsample2x2NoAlpha(unsigned char * data, int sx, int sy){
+void downsample2x2NoAlpha(Byte * data, int sx, int sy){
   int j=0;
   for (int y=0; y<sy/2; y++)
   for (int x=0; x<sx/2; x++)

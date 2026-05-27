@@ -62,7 +62,7 @@
 
 //#include "sample.xpm"
 
-typedef unsigned char Byte;
+
 typedef unsigned int uint;
 
 #include "CgUtil.h"
@@ -91,6 +91,7 @@ using namespace std;
 #include "HardSettings.h"
 
 #include "Common.h"
+#include "gifSave.h"
 
 #include "MyTab.h"
 
