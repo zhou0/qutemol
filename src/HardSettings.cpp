@@ -230,6 +230,7 @@ bool HardSettings::OnStart(){
   if (!Load("qutemol.cfg")) {
     Save("qutemol.cfg");
   }
+  return true;
 }
 
 
