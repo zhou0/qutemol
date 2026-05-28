@@ -736,7 +736,7 @@ float Mol::PredictAO(){
       float coeff=0.25+(AOdoneLvl-1)/20.0;
       if (coeff>1.0f) coeff=1.0f;
       return
-      coeff*float(DirV.size()*1.0f) /  (AOdoneLvl/*+DirV.size()*0.3f*/);
+      coeff*float(DirV.size()*1.0f) /  (AOdoneLvl);
     }
 }
 
@@ -880,13 +880,13 @@ void drawFrame() {
       while (!mol.DecentAO()) mol.PrepareAOstep(1);
     }
 
-    /*if (cgSettings.UseHalo()>0) {
+    //if (cgSettings.UseHalo()>0) {
       // write depth in HaloTexture
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, haloFrame);
     } else {
       // write depth in depthbuffer
       glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    }*/
+    }
 
 
   mainCanvas.SetAsOutput();
