@@ -13,6 +13,7 @@
 #include <GL/glu.h>
 
 #include <vector>
+
 extern int winx, winy;
 
 typedef unsigned char Byte;
@@ -22,17 +23,14 @@ typedef unsigned char Byte;
 //void refresh();
 long int getTicks();
 
-
-
 // drawing & geom settings...
 class CgUtil;
 class GeoSettings;
-class Mol;
-class ShadowMap;
 
 extern CgUtil cgSettings;
 extern GeoSettings geoSettings; // singleton
 
+extern bool bilinear;
 extern bool MovingLightMode;
 
 extern bool draw_balls; // just to test
@@ -67,15 +65,16 @@ int GetCurrentHetatm();
 int GetCurrentAtm();
 
 void SetTextureAccess(bool bilinear);
-Byte* GetSnapshot(int sx, int sy, bool alpha);
 //void ReloadTexture(vector<Byte> t, bool bilinear);
 
+Byte* GetSnapshot(int sx, int sy, bool alpha);
 
-extern Mol mol;
-extern ShadowMap shadowmap;
+//extern Mol mol;
+//extern ShadowMap shadowmap;
 extern CgUtil shadowSettings; 
 extern CgUtil shadowSettingsAcc;
 
+extern  float background;
 
 void StartTime();
 long int TakeTime(FILE *f, char *st);
@@ -88,9 +87,9 @@ void ResetColMode();
 
 void ChangeColorSchema(int i=-1);
 
-// PNG and other exported functions
+// PNG related
 bool PNGSaveWithAlpha( const char * filename, const Byte * data, int sx, int sy, int reverse = 0);
-void downsample2x2(Byte * data, int sx, int sy);
-void downsample2x2NoAlpha(Byte * data, int sx, int sy);
+void downsample2x2(unsigned char * data, int sx, int sy);
+void downsample2x2NoAlpha(unsigned char * data, int sx, int sy);
 
 #endif

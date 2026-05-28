@@ -1,4 +1,3 @@
-#include "Common.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -63,7 +62,7 @@
 
 //#include "sample.xpm"
 
-
+typedef unsigned char Byte;
 typedef unsigned int uint;
 
 #include "CgUtil.h"
@@ -84,7 +83,6 @@ using namespace std;
 #include "CubeMapSamp.h"
 #include "OctaMapSamp.h"
 #include "Mol.h"
-#include "gifSave.h"
 //#include "AOgpu.h"
 
 #include "MyCanvas.h"
@@ -116,6 +114,9 @@ wxStopWatch sw;
 
 
 #include "gifSave.h"
+
+// defined in pngSave
+
 
 
 wxBitmap *LoadPngImage(wxString st){

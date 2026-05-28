@@ -34,14 +34,6 @@ find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIRS})
 
 find_package(GIF REQUIRED)
-include(CheckSymbolExists)
-set(CMAKE_REQUIRED_LIBRARIES ${GIF_LIBRARIES})
-set(CMAKE_REQUIRED_INCLUDES ${GIF_INCLUDE_DIR})
-check_symbol_exists(GifQuantizeBuffer "gif_lib.h" HAS_GIF_QUANTIZE_BUFFER)
-if(HAS_GIF_QUANTIZE_BUFFER)
-    add_definitions(-DHAS_GIF_QUANTIZE_BUFFER)
-endif()
-
 include_directories(${GIF_INCLUDE_DIR})
 
 find_package(ZLIB REQUIRED)

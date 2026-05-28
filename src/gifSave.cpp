@@ -14,26 +14,9 @@
 
 using namespace std;
 
-#if (GIFLIB_MAJOR >= 5) && !defined(HAS_GIF_QUANTIZE_BUFFER)
-extern "C" int GifQuantizeBuffer(int Width, int Height, int *ColorMapSize,
-                      GifByteType *RedInput, GifByteType *GreenInput, GifByteType *BlueInput,
-                      GifByteType *OutputBuffer, GifColorType *OutputColorMap) {
-    for (int i = 0; i < *ColorMapSize; i++) {
-        OutputColorMap[i].Red = (i & 0x07) << 5;
-        OutputColorMap[i].Green = (i & 0x38) << 2;
-        OutputColorMap[i].Blue = (i & 0xC0);
-    }
-    for (int i = 0; i < Width * Height; i++) {
-        OutputBuffer[i] = (RedInput[i] >> 5) | ((GreenInput[i] >> 5) << 3) | ((BlueInput[i] >> 6) << 6);
-    }
-    return GIF_OK;
-}
-#endif
-
 typedef unsigned char Byte;
 
 #include "gifSave.h"
-#include "Common.h"
 
 static vector<vector<GifByteType> > frames;
 static vector<int> delay;
@@ -97,7 +80,7 @@ bool GifWrapper::Save(const char* filename){
       if (EGifPutLine(GifFile, &(frames[ni][j]), gifsx) == GIF_ERROR) return false;
     }
   }
-#if (GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1) || GIFLIB_MAJOR > 5
+#if GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1 || GIFLIB_MAJOR > 5
   if (EGifCloseFile(GifFile, &error) == GIF_ERROR) return false;
 #else
   if (EGifCloseFile(GifFile) == GIF_ERROR) return false;

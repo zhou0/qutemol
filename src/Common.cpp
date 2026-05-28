@@ -1,10 +1,9 @@
-#ifdef WIN32
-#include <windows.h>
-#endif
-#include "Common.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -494,7 +493,7 @@ void Mol::DrawShadowmap(bool invert){
 
     /*if (invert) {
     glScalef(1,1,-1);
-    }
+    }*/
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
@@ -637,7 +636,7 @@ int random(int max){
   return rand()%max;
 }
 
-//
+/*
 void FillRandomTexture(){
   int k=0;
   //for (int y=0; y<hardSettigs.TSIZE; y++)
@@ -658,7 +657,7 @@ void FillRedTexture(){
     texture[k++]=0;
     texture[k++]=120;
   }
-}
+}*/
 
 void FillShadedTexture(){
 //  OctaMapSamp s(CSIZE);
@@ -736,7 +735,7 @@ float Mol::PredictAO(){
       float coeff=0.25+(AOdoneLvl-1)/20.0;
       if (coeff>1.0f) coeff=1.0f;
       return
-      coeff*float(DirV.size()*1.0f) /  (AOdoneLvl);
+      coeff*float(DirV.size()*1.0f) /  (AOdoneLvl/*+DirV.size()*0.3f*/);
     }
 }
 
@@ -770,7 +769,6 @@ bool Mol::PrepareAOSingleView(){
   i++; if (i>DirV.size()) i=0;
   AOgpu2::UnBind();
   AOdoneLvl=DirV.size();
-  return true;
 }
 
 bool Mol::PrepareAOstep(int nsteps){
@@ -880,13 +878,13 @@ void drawFrame() {
       while (!mol.DecentAO()) mol.PrepareAOstep(1);
     }
 
-    //if (cgSettings.UseHalo()>0) {
-    //  // write depth in HaloTexture
-    //  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, haloFrame);
-    //} else {
-    //  // write depth in depthbuffer
-    //  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    //}
+    /*if (cgSettings.UseHalo()>0) {
+      // write depth in HaloTexture
+      glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, haloFrame);
+    } else {
+      // write depth in depthbuffer
+      glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    }*/
 
 
   mainCanvas.SetAsOutput();
@@ -1012,7 +1010,7 @@ void SetTextureAccess(bool bilinear){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-//
+/*
 void ReloadTexture(vector<Byte> t, bool bilinear){
 //  glEnable(GL_TEXTURE);
   glEnable(GL_TEXTURE_2D);
@@ -1034,7 +1032,7 @@ void ReloadTexture(vector<Byte> t, bool bilinear){
 
 
   SetTextureAccess(bilinear);
-}
+}*/
 
 int initGl(){
 
@@ -1082,22 +1080,22 @@ Point3f RandomUnitVec(){
 
 long int globaltime,startingtime;
 
-void StartTime(){
+void StartTime();/*{
   startingtime=globaltime=getTicks();
-}
+}*/
 
-long int TakeTime(FILE *f , char *st){
+long int TakeTime(FILE *f , char *st);/*{
   long int timen=getTicks(), delta=timen-globaltime;
   fprintf(f,"%5dmsec: %s\n",delta,st);
   globaltime=timen;
   return delta;
-}
-long int TakeTotalTime(){
+}*/
+/*long int TakeTotalTime(){
   long int timen=getTicks(), delta=timen-startingtime;
   printf("------------------\nTotal time: %5dmsec\n",delta);
   globaltime=timen;
   return delta;
-}
+}*/
 
 float myfabs(float a){
   return (a<0)?-a:a;
@@ -1125,10 +1123,10 @@ int InitQuteMol(const char * filename)
   // legal to call it before that time because the OpenGL context
   // does not exist yet.
 
-  //if (!initGl()) {
+  /*if (!initGl()) {
     printf("failed to initialize! :(\n");
     return 0;
-  }
+  }*/
 
   //FillRandomTexture();
   //mol.DuplicateTexels(texture, TSIZE);

@@ -52,7 +52,6 @@ public:
     delta=1;
     
     enableif=NULL;
-    return true;
 
   }
   
@@ -144,12 +143,10 @@ public:
 
   bool EndEnableGroup(){
     enableif=NULL;
-    return true;
   }
   
   bool StartEnableGroup(){
     enableif=lastRadio;
-    return true;
   }
   
   bool pressButton(wxWindowID x){
