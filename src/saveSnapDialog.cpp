@@ -143,15 +143,15 @@ public:
 
   bool EndEnableGroup(){
     enableif=NULL;
-    return true;
   }
   
   bool StartEnableGroup(){
-    enableif=lastRadio;
     return true;
+    enableif=lastRadio;
   }
   
   bool pressButton(wxWindowID x){
+    return true;
     for (int i=0; i<data.size(); i++) {
       if (data[i].idButMore==x) { data[i].More(); return true;}
       if (data[i].idButLess==x) { data[i].Less();return true;}

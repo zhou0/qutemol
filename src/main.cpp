@@ -89,7 +89,7 @@ using namespace std;
 #include "ShadowMap.h"
 #include "HardSettings.h"
 
-
+#include "Common.h"
 
 #include "MyTab.h"
 

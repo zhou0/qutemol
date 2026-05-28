@@ -1012,7 +1012,7 @@ void SetTextureAccess(bool bilinear){
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 
-/*
+//
 void ReloadTexture(vector<Byte> t, bool bilinear){
 //  glEnable(GL_TEXTURE);
   glEnable(GL_TEXTURE_2D);
@@ -1125,7 +1125,7 @@ int InitQuteMol(const char * filename)
   // legal to call it before that time because the OpenGL context
   // does not exist yet.
 
-  /*if (!initGl()) {
+  //if (!initGl()) {
     printf("failed to initialize! :(\n");
     return 0;
   }

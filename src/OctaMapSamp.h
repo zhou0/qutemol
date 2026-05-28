@@ -1,11 +1,7 @@
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#ifdef WIN32
-#include <windows.h>
-#endif
-#include <GL/glew.h>
-#include <GL/glu.h>
+#ifndef OCTAMAPSAMP_H
+#define OCTAMAPSAMP_H
+
+#include "Common.h"
 
 #include <vcg/space/point3.h>
 using namespace vcg;
@@ -352,3 +348,5 @@ public:
 };
 
 
+
+#endif
