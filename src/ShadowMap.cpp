@@ -256,6 +256,7 @@ bool ShadowMap::initHalo(){
 bool AOgpu2::init(){
   if (!moltextureCanvas.Test()) return false;
   mainCanvas.SetAsOutput();
+  return true;
 }
 
 float myrand();
