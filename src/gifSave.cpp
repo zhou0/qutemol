@@ -40,11 +40,10 @@ bool GifWrapper::AddFrame(Byte* data, int sx, int sy, float dt){
     }
 #if GIFLIB_MAJOR >= 5
     outputPalette = GifMakeMapObject(paletteSize, NULL);
-    if (GifQuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
 #else
     outputPalette = MakeMapObject(paletteSize, NULL);
-    if (QuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
 #endif
+    if (QuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
   } else {
     for (int i=0, j=0; i<npix; i++){
       int best=0; int bestdist=1000000;
