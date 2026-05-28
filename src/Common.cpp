@@ -637,7 +637,7 @@ int random(int max){
   return rand()%max;
 }
 
-/*
+//
 void FillRandomTexture(){
   int k=0;
   //for (int y=0; y<hardSettigs.TSIZE; y++)
@@ -881,12 +881,12 @@ void drawFrame() {
     }
 
     //if (cgSettings.UseHalo()>0) {
-      // write depth in HaloTexture
-      glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, haloFrame);
-    } else {
-      // write depth in depthbuffer
-      glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-    }
+    //  // write depth in HaloTexture
+    //  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, haloFrame);
+    //} else {
+    //  // write depth in depthbuffer
+    //  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    //}
 
 
   mainCanvas.SetAsOutput();
