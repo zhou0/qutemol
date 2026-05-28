@@ -88,7 +88,7 @@ if(WIN32)
     if(EXISTS "${CMAKE_SOURCE_DIR}/src/main.rc")
         list(APPEND SOURCES src/main.rc)
     endif()
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_WINSOCKAPI_)
 endif()
 
 if(VCG_PATH)

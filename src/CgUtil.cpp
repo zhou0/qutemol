@@ -1,3 +1,6 @@
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -7,11 +10,7 @@
 
 #include "CgUtil.h"
 
-#if defined(_WIN32)
-#include <windows.h>
-#else
 #include <string.h>  // for strlen
-#endif
 
 #include <stdio.h>
 

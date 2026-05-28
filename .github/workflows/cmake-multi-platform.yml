@@ -53,6 +53,12 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/cnr-isti-vclab/vcglib.git vcg
 
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
     - name: Configure CMake
       shell: bash
       run: |

@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <GL/glew.h>
 #include <GL/glu.h>
 
@@ -227,6 +230,7 @@ bool HardSettings::OnStart(){
   if (!Load("qutemol.cfg")) {
     Save("qutemol.cfg");
   }
+  return true;
 }
 
 
