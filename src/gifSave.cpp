@@ -38,7 +38,7 @@ bool GifWrapper::AddFrame(Byte* data, int sx, int sy, float dt){
     for (int i=0, j=0; i<npix; i++){
       r[i]=data[j++]; g[i]=data[j++]; b[i]=data[j++];
     }
-#if GIFLIB_MAJOR >= 5
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
     outputPalette = GifMakeMapObject(paletteSize, NULL);
     if (GifQuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
 #else
@@ -63,7 +63,7 @@ bool GifWrapper::AddFrame(Byte* data, int sx, int sy, float dt){
 }
 
 bool GifWrapper::Save(const char* filename){
-#if GIFLIB_MAJOR >= 5
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
   int error;
   GifFileType* GifFile = EGifOpenFileName(filename, false, &error);
 #else
@@ -80,7 +80,7 @@ bool GifWrapper::Save(const char* filename){
       if (EGifPutLine(GifFile, &(frames[ni][j]), gifsx) == GIF_ERROR) return false;
     }
   }
-#if GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1 || GIFLIB_MAJOR > 5
+#if (defined(GIFLIB_MAJOR) && GIFLIB_MAJOR == 5 && GIFLIB_MINOR >= 1) || (defined(GIFLIB_MAJOR) && GIFLIB_MAJOR > 5)
   if (EGifCloseFile(GifFile, &error) == GIF_ERROR) return false;
 #else
   if (EGifCloseFile(GifFile) == GIF_ERROR) return false;
