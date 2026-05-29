@@ -18,16 +18,31 @@ typedef unsigned char Byte;
 
 #include "gifSave.h"
 
+// Symbol detection from CMake
 #ifdef HAS_GIF_MAKE_MAP_OBJECT
+#define GifMakeMapObject_ GifMakeMapObject
+#elif defined(HAS_MAKE_MAP_OBJECT)
+#define GifMakeMapObject_ MakeMapObject
+#else
+// Fallback logic for when CMake checks are skipped or version macros are used
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
 #define GifMakeMapObject_ GifMakeMapObject
 #else
 #define GifMakeMapObject_ MakeMapObject
 #endif
+#endif
 
 #ifdef HAS_GIF_QUANTIZE_BUFFER
 #define GifQuantizeBuffer_ GifQuantizeBuffer
+#elif defined(HAS_QUANTIZE_BUFFER)
+#define GifQuantizeBuffer_ QuantizeBuffer
+#else
+// Fallback logic
+#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
+#define GifQuantizeBuffer_ GifQuantizeBuffer
 #else
 #define GifQuantizeBuffer_ QuantizeBuffer
+#endif
 #endif
 
 static vector<vector<GifByteType> > frames;
