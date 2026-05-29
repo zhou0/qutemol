@@ -118,20 +118,28 @@ wxStopWatch sw;
 // defined in pngSave
 
 
-
 wxBitmap *LoadPngImage(wxString st){
+  wxArrayString paths;
 #ifdef __DARWIN__
-	wxString basePath = wxStandardPaths::Get().GetResourcesDir();
-  wxBitmap* res=new wxBitmap(basePath+_T("/image/")+st+_T(".png"),wxBITMAP_TYPE_PNG);
-#else
-  wxBitmap* res=new wxBitmap(_T("image/")+st+_T(".png"),wxBITMAP_TYPE_PNG);
-#endif  
-  //wxBitmap* res=new wxBitmap(st,wxBITMAP_TYPE_PNG_RESOURCE);
+  paths.Add(wxStandardPaths::Get().GetResourcesDir() + _T("/image/"));
+#endif
+  paths.Add(_T("image/"));
+  paths.Add(_T("./image/"));
+  paths.Add(_T("src/image/"));
+  paths.Add(_T("./src/image/"));
+  paths.Add(_T("../src/image/"));
 
-  // Marke all black pixels as transparent (useful for Windows NT only)
-  //res->SetMask(new wxMask(*res, wxColor(0,0,0)));
+  for (size_t i = 0; i < paths.GetCount(); i++) {
+    wxString fullPath = paths[i] + st + _T(".png");
+    if (wxFileExists(fullPath)) {
+      wxBitmap* res = new wxBitmap(fullPath, wxBITMAP_TYPE_PNG);
+      if (res->IsOk()) return res;
+      delete res;
+    }
+  }
 
-  return res;
+  wxLogWarning(_T("Could not load image %s from any path. Using placeholder."), st.c_str());
+  return new wxBitmap(1, 1);
 }
 
 void MyTab::SceneChanged(){
