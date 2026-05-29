@@ -1,0 +1,9 @@
+I have modified the CMakeLists.txt to implement automatic VCG library installation.
+
+Key changes:
+1. Added VCG detection logic using `find_file` looking for `wrap/gui/trackball.cpp`.
+2. On Windows: If VCG is missing, it tries to use `vcpkg install vcglib`.
+3. On macOS/Linux: If VCG is missing, it downloads the VCG v1.0.0 tarball from GitHub, extracts it to the build directory, and sets `VCG_PATH` accordingly.
+4. Updated the logic for including VCG source files to correctly use the detected or installed `VCG_PATH`.
+
+I have verified the changes on a Linux environment where it successfully downloaded and built with VCG.
