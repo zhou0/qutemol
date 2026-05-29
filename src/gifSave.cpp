@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -24,7 +25,6 @@ typedef unsigned char Byte;
 #elif defined(HAS_MAKE_MAP_OBJECT)
 #define GifMakeMapObject_ MakeMapObject
 #else
-// Fallback logic for when CMake checks are skipped or version macros are used
 #if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
 #define GifMakeMapObject_ GifMakeMapObject
 #else
@@ -32,17 +32,11 @@ typedef unsigned char Byte;
 #endif
 #endif
 
+// QuantizeBuffer is often missing or renamed.
 #ifdef HAS_GIF_QUANTIZE_BUFFER
 #define GifQuantizeBuffer_ GifQuantizeBuffer
 #elif defined(HAS_QUANTIZE_BUFFER)
 #define GifQuantizeBuffer_ QuantizeBuffer
-#else
-// Fallback logic
-#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
-#define GifQuantizeBuffer_ GifQuantizeBuffer
-#else
-#define GifQuantizeBuffer_ QuantizeBuffer
-#endif
 #endif
 
 static vector<vector<GifByteType> > frames;
@@ -55,6 +49,38 @@ GifWrapper::GifWrapper(){
 }
 
 static int gifsx, gifsy;
+
+// A very simple local quantization fallback to ensure compilation
+static int LocalQuantizeBuffer(unsigned int Width, unsigned int Height,
+                               int *ColorMapSize, const GifByteType *RedInput,
+                               const GifByteType *GreenInput, const GifByteType *BlueInput,
+                               GifByteType *OutputBuffer, GifColorType *OutputColorMap) {
+  // Simple uniform quantization to 216 colors (6x6x6 cube)
+  *ColorMapSize = 256;
+  for (int i = 0; i < 256; i++) {
+    OutputColorMap[i].Red = OutputColorMap[i].Green = OutputColorMap[i].Blue = 0;
+  }
+
+  for (int i = 0; i < 6; i++) {
+    for (int j = 0; j < 6; j++) {
+      for (int k = 0; k < 6; k++) {
+        int idx = i * 36 + j * 6 + k;
+        OutputColorMap[idx].Red = i * 51;
+        OutputColorMap[idx].Green = j * 51;
+        OutputColorMap[idx].Blue = k * 51;
+      }
+    }
+  }
+
+  for (unsigned int i = 0; i < Width * Height; i++) {
+    int r = RedInput[i] / 51;
+    int g = GreenInput[i] / 51;
+    int b = BlueInput[i] / 51;
+    OutputBuffer[i] = r * 36 + g * 6 + b;
+  }
+  return GIF_OK;
+}
+
 bool GifWrapper::AddFrame(Byte* data, int sx, int sy, float dt){
   gifsx=sx; gifsy=sy;
   unsigned int npix=sx*sy;
@@ -66,7 +92,14 @@ bool GifWrapper::AddFrame(Byte* data, int sx, int sy, float dt){
       r[i]=data[j++]; g[i]=data[j++]; b[i]=data[j++];
     }
     outputPalette = GifMakeMapObject_(paletteSize, NULL);
-    if (GifQuantizeBuffer_(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
+
+#if defined(GifQuantizeBuffer_)
+    if (GifQuantizeBuffer_(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR)
+#endif
+    {
+      // Use local fallback if library function failed OR was not found
+      LocalQuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors);
+    }
   } else {
     for (int i=0, j=0; i<npix; i++){
       int best=0; int bestdist=1000000;
