@@ -1,0 +1,15 @@
+build/
+bin/
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.vcxproj
+*.sln
+*.user
+.DS_Store
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile

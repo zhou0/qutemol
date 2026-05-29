@@ -178,7 +178,7 @@ bool HardSettings::Load(char *fn){
   if (!f) return false;
   char token[255];
   char last[255];
-  last[0]==0;
+  last[0]=0;
   while (1){
     if (fscanf(f,"%s",token)!=1) break;
     if (token[0]=='=') {
