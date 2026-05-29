@@ -6,8 +6,7 @@
 #include <windows.h>
 #endif
 
-#include <GL/glew.h>
-#include <GL/glu.h>
+#include "qopengl.h"
 
 #include <stdlib.h>
 #include <stdio.h>

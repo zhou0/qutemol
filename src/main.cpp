@@ -4,8 +4,7 @@
 #ifdef WIN32
 #include <windows.h>
 #endif
-#include <GL/glew.h>
-#include <GL/glu.h>
+#include "qopengl.h"
 
 //
 // qutemol on wxWidgets MAIN 
@@ -50,17 +49,6 @@
 #endif
 
 #include "main.h"
-#ifdef __WXMAC__
-#  ifdef __DARWIN__
-#    include <OpenGL/glu.h>
-#  else
-#    include <glu.h>
-#  endif
-#else
-#  include <GL/glu.h>
-#endif
-
-//#include "sample.xpm"
 
 typedef unsigned char Byte;
 typedef unsigned int uint;

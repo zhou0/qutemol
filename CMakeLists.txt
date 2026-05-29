@@ -306,6 +306,7 @@ set(SOURCES
 
 # Headers
 set(HEADERS
+    src/qopengl.h
     src/AO.h
     src/AOgpu.h
     src/AtomColor.h

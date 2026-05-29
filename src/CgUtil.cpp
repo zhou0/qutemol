@@ -4,8 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <GL/glew.h>
-#include <GL/glu.h>
+#include "qopengl.h"
 
 
 #include "CgUtil.h"
