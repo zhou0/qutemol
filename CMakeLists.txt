@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 project(qutemol)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -31,26 +31,23 @@ if(NOT VCG_PATH OR NOT EXISTS "${VCG_PATH}/wrap/gui/trackball.cpp")
                 set(VCG_PATH ${VCG_PATH_DETECTED} CACHE PATH "Path to vcglib" FORCE)
             endif()
         endif()
-    else()
-        set(VCG_VERSION "1.0.0")
-        set(VCG_TARBALL "${CMAKE_BINARY_DIR}/vcglib-${VCG_VERSION}.tar.gz")
-        set(VCG_URL "https://github.com/cnr-isti-vclab/vcglib/archive/refs/tags/v${VCG_VERSION}.tar.gz")
-        message(STATUS "Downloading VCG ${VCG_VERSION} from ${VCG_URL}...")
-        file(DOWNLOAD ${VCG_URL} ${VCG_TARBALL} SHOW_PROGRESS)
-        message(STATUS "Extracting VCG...")
-        execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${VCG_TARBALL} WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-        set(VCG_PATH "${CMAKE_BINARY_DIR}/vcglib-${VCG_VERSION}" CACHE PATH "Path to vcglib" FORCE)
     endif()
+endif()
+
+if(NOT VCG_PATH OR NOT EXISTS "${VCG_PATH}/wrap/gui/trackball.cpp")
+    include(FetchContent)
+    FetchContent_Declare(
+        vcglib
+        URL https://github.com/cnr-isti-vclab/vcglib/archive/refs/tags/v1.0.0.tar.gz
+    )
+    FetchContent_MakeAvailable(vcglib)
+    set(VCG_PATH ${vcglib_SOURCE_DIR} CACHE PATH "Path to vcglib" FORCE)
 endif()
 
 if(VCG_PATH)
     message(STATUS "Using VCG_PATH: ${VCG_PATH}")
     include_directories(${VCG_PATH})
 endif()
-# Dependencies
-include_directories(src)
-
-# Advanced wxWidgets search: Look for wx-config in common paths and versions
 if(NOT WIN32)
     find_program(WX_CONFIG_EXE
         NAMES wx-config wx-config-3.2 wx-config-3.1 wx-config-3.0

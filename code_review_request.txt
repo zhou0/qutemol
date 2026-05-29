@@ -1,9 +1,9 @@
-I have modified the CMakeLists.txt to implement automatic VCG library installation.
+I have updated the CMakeLists.txt to use `FetchContent` for downloading and managing the VCG library on macOS and Linux, as requested.
 
 Key changes:
-1. Added VCG detection logic using `find_file` looking for `wrap/gui/trackball.cpp`.
-2. On Windows: If VCG is missing, it tries to use `vcpkg install vcglib`.
-3. On macOS/Linux: If VCG is missing, it downloads the VCG v1.0.0 tarball from GitHub, extracts it to the build directory, and sets `VCG_PATH` accordingly.
-4. Updated the logic for including VCG source files to correctly use the detected or installed `VCG_PATH`.
+1. Increased `cmake_minimum_required` to `VERSION 3.11` to support `FetchContent`.
+2. Implemented `FetchContent_Declare` and `FetchContent_MakeAvailable` for the VCG v1.0.0 tarball.
+3. Updated the VCG detection logic to fall back to `FetchContent` if local or `vcpkg` (on Windows) installations are not found.
+4. Verified that the build correctly picks up the VCG source files from the fetched content.
 
-I have verified the changes on a Linux environment where it successfully downloaded and built with VCG.
+The project builds successfully on Linux using this new approach.
