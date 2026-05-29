@@ -33,7 +33,33 @@ include_directories(${GLEW_INCLUDE_DIRS})
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIRS})
 
-find_package(GIF REQUIRED)
+# Try to find GIF, and install if missing
+find_package(GIF)
+if(NOT GIF_FOUND)
+    message(STATUS "GIF library not found. Attempting to install automatically...")
+    if(WIN32)
+        execute_process(COMMAND vcpkg install giflib)
+    elseif(APPLE)
+        execute_process(COMMAND sudo port install giflib RESULT_VARIABLE macport_res)
+        if(NOT macport_res EQUAL 0)
+            execute_process(COMMAND brew install giflib)
+        endif()
+    elseif(UNIX)
+        find_program(APT_GET apt-get)
+        find_program(DNF dnf)
+        find_program(PACMAN pacman)
+        if(APT_GET)
+            execute_process(COMMAND sudo apt-get update)
+            execute_process(COMMAND sudo apt-get install -y libgif-dev)
+        elseif(DNF)
+            execute_process(COMMAND sudo dnf install -y giflib-devel)
+        elseif(PACMAN)
+            execute_process(COMMAND sudo pacman -S --noconfirm giflib)
+        endif()
+    endif()
+    # Re-try finding GIF
+    find_package(GIF REQUIRED)
+endif()
 include_directories(${GIF_INCLUDE_DIR})
 
 find_package(ZLIB REQUIRED)
@@ -41,6 +67,28 @@ include_directories(${ZLIB_INCLUDE_DIRS})
 
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIRS})
+
+# GIF symbol checks
+include(CheckSymbolExists)
+set(CMAKE_REQUIRED_INCLUDES ${GIF_INCLUDE_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${GIF_LIBRARIES})
+check_symbol_exists(GifQuantizeBuffer "gif_lib.h" HAS_GIF_QUANTIZE_BUFFER)
+check_symbol_exists(QuantizeBuffer "gif_lib.h" HAS_QUANTIZE_BUFFER)
+check_symbol_exists(GifMakeMapObject "gif_lib.h" HAS_GIF_MAKE_MAP_OBJECT)
+check_symbol_exists(MakeMapObject "gif_lib.h" HAS_MAKE_MAP_OBJECT)
+
+if(HAS_GIF_QUANTIZE_BUFFER)
+    add_definitions(-DHAS_GIF_QUANTIZE_BUFFER)
+endif()
+if(HAS_QUANTIZE_BUFFER)
+    add_definitions(-DHAS_QUANTIZE_BUFFER)
+endif()
+if(HAS_GIF_MAKE_MAP_OBJECT)
+    add_definitions(-DHAS_GIF_MAKE_MAP_OBJECT)
+endif()
+if(HAS_MAKE_MAP_OBJECT)
+    add_definitions(-DHAS_MAKE_MAP_OBJECT)
+endif()
 
 # Source files
 set(SOURCES
@@ -89,6 +137,8 @@ if(WIN32)
         list(APPEND SOURCES src/main.rc)
     endif()
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_WINSOCKAPI_)
+    # Enable WIN32 executable for WinMain
+    set(GUI_TYPE WIN32)
 endif()
 
 if(VCG_PATH)
@@ -105,7 +155,7 @@ if(VCG_PATH)
     endif()
 endif()
 
-add_executable(qutemol ${SOURCES} ${HEADERS})
+add_executable(qutemol ${GUI_TYPE} ${SOURCES} ${HEADERS})
 
 target_link_libraries(qutemol
     ${wxWidgets_LIBRARIES}
