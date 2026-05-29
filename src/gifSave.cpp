@@ -18,6 +18,18 @@ typedef unsigned char Byte;
 
 #include "gifSave.h"
 
+#ifdef HAS_GIF_MAKE_MAP_OBJECT
+#define GifMakeMapObject_ GifMakeMapObject
+#else
+#define GifMakeMapObject_ MakeMapObject
+#endif
+
+#ifdef HAS_GIF_QUANTIZE_BUFFER
+#define GifQuantizeBuffer_ GifQuantizeBuffer
+#else
+#define GifQuantizeBuffer_ QuantizeBuffer
+#endif
+
 static vector<vector<GifByteType> > frames;
 static vector<int> delay;
 static ColorMapObject* outputPalette;
@@ -38,13 +50,8 @@ bool GifWrapper::AddFrame(Byte* data, int sx, int sy, float dt){
     for (int i=0, j=0; i<npix; i++){
       r[i]=data[j++]; g[i]=data[j++]; b[i]=data[j++];
     }
-#if defined(GIFLIB_MAJOR) && GIFLIB_MAJOR >= 5
-    outputPalette = GifMakeMapObject(paletteSize, NULL);
-    if (GifQuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
-#else
-    outputPalette = MakeMapObject(paletteSize, NULL);
-    if (QuantizeBuffer(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
-#endif
+    outputPalette = GifMakeMapObject_(paletteSize, NULL);
+    if (GifQuantizeBuffer_(sx, sy, &paletteSize, &(r[0]),&(g[0]),&(b[0]), &(output[0]), outputPalette->Colors) == GIF_ERROR) return false;
   } else {
     for (int i=0, j=0; i<npix; i++){
       int best=0; int bestdist=1000000;

@@ -42,6 +42,20 @@ include_directories(${ZLIB_INCLUDE_DIRS})
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIRS})
 
+# GIF version and symbol checks
+include(CheckSymbolExists)
+set(CMAKE_REQUIRED_INCLUDES ${GIF_INCLUDE_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${GIF_LIBRARIES})
+check_symbol_exists(GifQuantizeBuffer "gif_lib.h" HAS_GIF_QUANTIZE_BUFFER)
+check_symbol_exists(GifMakeMapObject "gif_lib.h" HAS_GIF_MAKE_MAP_OBJECT)
+
+if(HAS_GIF_QUANTIZE_BUFFER)
+    add_definitions(-DHAS_GIF_QUANTIZE_BUFFER)
+endif()
+if(HAS_GIF_MAKE_MAP_OBJECT)
+    add_definitions(-DHAS_GIF_MAKE_MAP_OBJECT)
+endif()
+
 # Source files
 set(SOURCES
     src/AO.cpp
