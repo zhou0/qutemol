@@ -21,8 +21,22 @@ endif()
 # Dependencies
 include_directories(src)
 
-# Try to find wxWidgets, and install if missing
+# Advanced wxWidgets search: Look for wx-config in common paths and versions
+if(NOT WIN32)
+    find_program(WX_CONFIG_EXE
+        NAMES wx-config wx-config-3.2 wx-config-3.1 wx-config-3.0
+        PATHS /opt/local/bin /usr/local/bin /usr/bin /opt/homebrew/bin
+    )
+    if(WX_CONFIG_EXE)
+        set(wxWidgets_CONFIG_EXECUTABLE ${WX_CONFIG_EXE})
+        message(STATUS "Found wx-config: ${WX_CONFIG_EXE}")
+    endif()
+endif()
+
+# Try to find wxWidgets
 find_package(wxWidgets COMPONENTS core base gl)
+
+# Auto-install logic if missing
 if(NOT wxWidgets_FOUND)
     message(STATUS "wxWidgets not found. Attempting to install automatically...")
     if(WIN32)
@@ -34,16 +48,13 @@ if(NOT wxWidgets_FOUND)
         find_program(PORT_EXE port)
         find_program(BREW_EXE brew)
         if(PORT_EXE)
-            # MacPorts: Try wxWidgets32
-            execute_process(COMMAND sudo ${PORT_EXE} install wxWidgets32 RESULT_VARIABLE port_res)
+            # Try wxWidgets-3.2 or 3.0
+            execute_process(COMMAND sudo ${PORT_EXE} install wxWidgets-3.2 RESULT_VARIABLE port_res)
             if(NOT port_res EQUAL 0)
-                message(WARNING "MacPorts installation failed.")
+                execute_process(COMMAND sudo ${PORT_EXE} install wxWidgets-3.0)
             endif()
         elseif(BREW_EXE)
-            execute_process(COMMAND ${BREW_EXE} install wxwidgets RESULT_VARIABLE brew_res)
-            if(NOT brew_res EQUAL 0)
-                message(WARNING "Homebrew installation failed.")
-            endif()
+            execute_process(COMMAND ${BREW_EXE} install wxwidgets)
         endif()
     elseif(UNIX)
         find_program(APT_GET apt-get)
@@ -59,18 +70,30 @@ if(NOT wxWidgets_FOUND)
         endif()
     endif()
 
-    # Re-try finding wxWidgets
+    # Re-try detection after installation attempt
+    if(NOT WIN32)
+        find_program(WX_CONFIG_EXE_RETRY
+            NAMES wx-config wx-config-3.2 wx-config-3.1 wx-config-3.0
+            PATHS /opt/local/bin /usr/local/bin /usr/bin /opt/homebrew/bin
+        )
+        if(WX_CONFIG_EXE_RETRY)
+            set(wxWidgets_CONFIG_EXECUTABLE ${WX_CONFIG_EXE_RETRY})
+        endif()
+    endif()
+
     find_package(wxWidgets COMPONENTS core base gl)
 
-    # Fallback to wx-config if find_package still fails on Unix-like systems
+    # Manual fallback to wx-config if find_package still fails
     if(NOT wxWidgets_FOUND AND NOT WIN32)
-        find_program(WX_CONFIG_EXE wx-config)
-        if(WX_CONFIG_EXE)
-            message(STATUS "find_package failed, falling back to wx-config...")
-            execute_process(COMMAND ${WX_CONFIG_EXE} --cppflags OUTPUT_VARIABLE WX_CPPFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
-            execute_process(COMMAND ${WX_CONFIG_EXE} --libs core,base,gl OUTPUT_VARIABLE WX_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT wxWidgets_CONFIG_EXECUTABLE)
+             find_program(wxWidgets_CONFIG_EXECUTABLE NAMES wx-config wx-config-3.2 wx-config-3.0)
+        endif()
 
-            # Extract include directories from cppflags (rough approximation)
+        if(wxWidgets_CONFIG_EXECUTABLE)
+            message(STATUS "find_package failed, falling back to manual wx-config usage: ${wxWidgets_CONFIG_EXECUTABLE}")
+            execute_process(COMMAND ${wxWidgets_CONFIG_EXECUTABLE} --cppflags OUTPUT_VARIABLE WX_CPPFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
+            execute_process(COMMAND ${wxWidgets_CONFIG_EXECUTABLE} --libs core,base,gl OUTPUT_VARIABLE WX_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
+
             string(REGEX MATCHALL "-I([^ ]+)" WX_INCDIRS "${WX_CPPFLAGS}")
             foreach(inc ${WX_INCDIRS})
                 string(SUBSTRING ${inc} 2 -1 clean_inc)
@@ -79,7 +102,7 @@ if(NOT wxWidgets_FOUND)
 
             set(wxWidgets_LIBRARIES "${WX_LIBS}")
             set(wxWidgets_FOUND TRUE)
-            message(STATUS "wxWidgets found via wx-config")
+            message(STATUS "wxWidgets configured manually via wx-config")
         endif()
     endif()
 
