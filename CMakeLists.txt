@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 project(qutemol)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -6,22 +6,48 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # VCG Library
 set(VCG_PATH "" CACHE PATH "Path to vcglib")
+
 if(NOT VCG_PATH)
-    if(EXISTS "${CMAKE_SOURCE_DIR}/vcg")
-        set(VCG_PATH "${CMAKE_SOURCE_DIR}/vcg")
-    else()
-        message(WARNING "VCG_PATH not set and 'vcg' directory not found in project root. VCG is required for building.")
+    find_file(VCG_TRACKBALL_FILE NAMES wrap/gui/trackball.cpp PATHS ${CMAKE_SOURCE_DIR}/vcg ${CMAKE_SOURCE_DIR}/../vcglib)
+    if(VCG_TRACKBALL_FILE)
+        get_filename_component(VCG_DIR_GUI "${VCG_TRACKBALL_FILE}" DIRECTORY)
+        get_filename_component(VCG_DIR_WRAP "${VCG_DIR_GUI}" DIRECTORY)
+        get_filename_component(VCG_PATH_DETECTED "${VCG_DIR_WRAP}" DIRECTORY)
+        set(VCG_PATH ${VCG_PATH_DETECTED} CACHE PATH "Path to vcglib" FORCE)
     endif()
 endif()
 
-if(VCG_PATH)
-    include_directories(${VCG_PATH})
+if(NOT VCG_PATH OR NOT EXISTS "${VCG_PATH}/wrap/gui/trackball.cpp")
+    message(STATUS "VCG library not found. Attempting to install automatically...")
+    if(WIN32)
+        find_program(VCPKG_EXE vcpkg)
+        if(VCPKG_EXE)
+            execute_process(COMMAND ${VCPKG_EXE} install vcglib)
+            find_file(VCG_TRACKBALL_FILE_VCPKG NAMES wrap/gui/trackball.cpp)
+            if(VCG_TRACKBALL_FILE_VCPKG)
+                get_filename_component(VCG_DIR_GUI "${VCG_TRACKBALL_FILE_VCPKG}" DIRECTORY)
+                get_filename_component(VCG_DIR_WRAP "${VCG_DIR_GUI}" DIRECTORY)
+                get_filename_component(VCG_PATH_DETECTED "${VCG_DIR_WRAP}" DIRECTORY)
+                set(VCG_PATH ${VCG_PATH_DETECTED} CACHE PATH "Path to vcglib" FORCE)
+            endif()
+        endif()
+    endif()
 endif()
 
-# Dependencies
-include_directories(src)
+if(NOT VCG_PATH OR NOT EXISTS "${VCG_PATH}/wrap/gui/trackball.cpp")
+    include(FetchContent)
+    FetchContent_Declare(
+        vcglib
+        URL https://github.com/cnr-isti-vclab/vcglib/archive/refs/tags/v1.0.0.tar.gz
+    )
+    FetchContent_MakeAvailable(vcglib)
+    set(VCG_PATH ${vcglib_SOURCE_DIR} CACHE PATH "Path to vcglib" FORCE)
+endif()
 
-# Advanced wxWidgets search: Look for wx-config in common paths and versions
+if(VCG_PATH)
+    message(STATUS "Using VCG_PATH: ${VCG_PATH}")
+    include_directories(${VCG_PATH})
+endif()
 if(NOT WIN32)
     find_program(WX_CONFIG_EXE
         NAMES wx-config wx-config-3.2 wx-config-3.1 wx-config-3.0

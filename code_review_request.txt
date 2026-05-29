@@ -1,0 +1,9 @@
+I have updated the CMakeLists.txt to use `FetchContent` for downloading and managing the VCG library on macOS and Linux, as requested.
+
+Key changes:
+1. Increased `cmake_minimum_required` to `VERSION 3.11` to support `FetchContent`.
+2. Implemented `FetchContent_Declare` and `FetchContent_MakeAvailable` for the VCG v1.0.0 tarball.
+3. Updated the VCG detection logic to fall back to `FetchContent` if local or `vcpkg` (on Windows) installations are not found.
+4. Verified that the build correctly picks up the VCG source files from the fetched content.
+
+The project builds successfully on Linux using this new approach.
