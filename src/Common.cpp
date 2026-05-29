@@ -766,9 +766,9 @@ bool Mol::PrepareAOSingleView(){
   PrepareAOstart();
   AOgpu2::Bind();
   AOgpu2 ao(DirV[i], *this, 4 );
-  i++; if (i>DirV.size()) i=0;
+  if (DirV.size()>0) { i++; if (i>=DirV.size()) i=0; }
   AOgpu2::UnBind();
-  AOdoneLvl=DirV.size();
+  AOdoneLvl=DirV.size(); return true;
 }
 
 bool Mol::PrepareAOstep(int nsteps){
