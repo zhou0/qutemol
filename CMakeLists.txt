@@ -137,6 +137,8 @@ if(WIN32)
         list(APPEND SOURCES src/main.rc)
     endif()
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -DWIN32_LEAN_AND_MEAN -DNOMINMAX -D_WINSOCKAPI_)
+    # Enable WIN32 executable for WinMain
+    set(GUI_TYPE WIN32)
 endif()
 
 if(VCG_PATH)
@@ -153,7 +155,7 @@ if(VCG_PATH)
     endif()
 endif()
 
-add_executable(qutemol ${SOURCES} ${HEADERS})
+add_executable(qutemol ${GUI_TYPE} ${SOURCES} ${HEADERS})
 
 target_link_libraries(qutemol
     ${wxWidgets_LIBRARIES}
