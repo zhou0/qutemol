@@ -89,9 +89,9 @@ static void  Random(int vn, std::vector<Point3<ScalarType > > &NN)
   NN.clear();
   while(NN.size()<vn)
   {
-    Point3x pp(((float)rand())/RAND_MAX,
-	       ((float)rand())/RAND_MAX,
-	       ((float)rand())/RAND_MAX);
+    Point3x pp(((float)rand())/(float)RAND_MAX,
+	       ((float)rand())/(float)RAND_MAX,
+	       ((float)rand())/(float)RAND_MAX);
     pp=pp*2.0-Point3x(1,1,1);
     if(pp.SquaredNorm()<1)
     {
@@ -146,9 +146,9 @@ static void Perturb(std::vector<Point3<ScalarType > > &NN)
   typename std::vector<Point3<ScalarType> >::iterator vi;
   for(vi=NN.begin(); vi!=NN.end();++vi) 
   {
-    Point3x pp(((float)rand())/RAND_MAX,
-	       ((float)rand())/RAND_MAX,
-	       ((float)rand())/RAND_MAX);
+    Point3x pp(((float)rand())/(float)RAND_MAX,
+	       ((float)rand())/(float)RAND_MAX,
+	       ((float)rand())/(float)RAND_MAX);
     pp=pp*2.0-Point3x(1,1,1);
     pp*=width;
     (*vi)+=pp;

@@ -422,12 +422,12 @@ bool Mol::ReadPdb(const char *_filename){
 
     ready=false;
   
-    sprintf(filename,"%s",_filename);
+    snprintf(filename, sizeof(filename),"%s",_filename);
 
     FILE *f=fopen(filename,"r");
     
     if (!f) {
-     sprintf(QAtom::lastReadError,"Error reding %s:\ncould not open file\n",filename);
+     snprintf(QAtom::lastReadError, sizeof(QAtom::lastReadError),"Error reding %s:\ncould not open file\n",filename);
      return false;
     }
     
@@ -460,7 +460,7 @@ bool Mol::ReadPdb(const char *_filename){
           (strcmp( st.substr(0,6).c_str(), "HETATM") == 0 )    ){
        atom.push_back(QAtom(st));
        if (QAtom::readError) {
-          sprintf(QAtom::lastReadError,"Error reading %s!\nLine %d: %s",filename,lineN,&(st[0]));
+          snprintf(QAtom::lastReadError, sizeof(QAtom::lastReadError),"Error reading %s!\nLine %d: %s",filename,lineN,&(st[0]));
           if (showprogress) EndProgress();
           return false;
        }
