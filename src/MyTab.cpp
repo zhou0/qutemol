@@ -122,26 +122,26 @@ static wxColor currentButtonBg;
 const int NPreset=15;
 static wxButton* preset[NPreset];
 
-static char* presetFile[NPreset] = {
-  "presets//real.preset",
-  "presets//real2.preset",
-  "presets//direct.preset",
+static const char* presetFile[NPreset] = {
+  "real.preset",
+  "real2.preset",
+  "direct.preset",
   
-  "presets//illustr.preset",
-  "presets//illustr_new.preset",
-  "presets//illustr_motm.preset",
+  "illustr.preset",
+  "illustr_new.preset",
+  "illustr_motm.preset",
 
-  "presets//qutemol1.preset",
-  "presets//qutemol2.preset",
-  "presets//qutemol3.preset",
+  "qutemol1.preset",
+  "qutemol2.preset",
+  "qutemol3.preset",
   
-  "presets//coolb.preset",
-  "presets//coold.preset",
-  "presets//borders_cool.preset",
+  "coolb.preset",
+  "coold.preset",
+  "borders_cool.preset",
   
-  "presets//sem.preset",
-  "presets//sem2.preset",
-  "presets//shape.preset",
+  "sem.preset",
+  "sem2.preset",
+  "shape.preset",
 };
 
 
@@ -498,12 +498,8 @@ void MyTab::OnButton(wxCommandEvent & event){
   default:
     int pid=id-ID_FirstPreset;
     if ( (pid>=0) && (pid<NPreset) ) {
-#ifdef __DARWIN__
-			wxString presetPath = wxStandardPaths::Get().GetResourcesDir() + "/" + presetFile[pid];
-			if (!cgSettings.Load( presetPath.c_str() )) {
-#else
-      if (!cgSettings.Load( presetFile[pid] )) {
-#endif			
+      wxString path = FindPresetPath(presetFile[pid]);
+      if (!cgSettings.Load(path.c_str())) {
         wxMessageBox(_T("Unable to load presets!"), _T(":-("), wxOK | wxICON_EXCLAMATION, this);
       }
       emphCurrentPreset(pid);
@@ -1365,4 +1361,25 @@ void MyTab::UpdateAll(){
   buttonTable.UpdateAll(); 
   //EnableGeom();
   EnableCustom();
+}
+wxString MyTab::FindPresetPath(wxString filename) {
+  wxArrayString paths;
+#ifdef __DARWIN__
+  paths.Add(wxStandardPaths::Get().GetResourcesDir() + _T("/presets/"));
+  paths.Add(wxStandardPaths::Get().GetResourcesDir() + _T("/"));
+#endif
+  paths.Add(_T("presets/"));
+  paths.Add(_T("./presets/"));
+  paths.Add(_T("src/presets/"));
+  paths.Add(_T("./src/presets/"));
+  paths.Add(_T("../src/presets/"));
+  paths.Add(_T(""));
+
+  for (size_t i = 0; i < paths.GetCount(); i++) {
+    wxString fullPath = paths[i] + filename;
+    if (wxFileExists(fullPath)) {
+      return fullPath;
+    }
+  }
+  return filename; // Fallback to original
 }

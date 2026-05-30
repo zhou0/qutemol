@@ -156,7 +156,7 @@ void StartTime(){
   sw.Start();
 }
 
-long int TakeTime(FILE *f , char *st){
+long int TakeTime(FILE *f , const char *st){
   long int delta=sw.Time();
   fprintf(f,"%5ldmsec: %s\n",delta,st);
   //globaltime=timen;
@@ -742,11 +742,7 @@ extern int CSIZE; // number of texels for a patch of an aotm
 
 void TestGLCanvas::OnKeyDown( wxKeyEvent& event ){
   wxConsumeTrackBallEvent(event,true,track);
-#ifdef __DARWIN__
-	wxString path = wxStandardPaths::Get().GetResourcesDir() + "/presets/new.preset";
-#else
-	wxString path =  "presets\\new.preset";
-#endif
+  wxString path = MyTab::FindPresetPath(_T("new.preset"));
   if (event.GetKeyCode() == WXK_F7 ) {
     cgSettings.Save(path.c_str());
   }

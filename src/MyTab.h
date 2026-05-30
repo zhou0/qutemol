@@ -51,6 +51,8 @@ class MyTab: public wxPanel{
   void OnCheckBox(wxCommandEvent & event);
   
   static void UpdateAll();
+
+  static wxString FindPresetPath(wxString filename);
   
   DECLARE_EVENT_TABLE()
 };

@@ -1084,7 +1084,7 @@ void StartTime();/*{
   startingtime=globaltime=getTicks();
 }*/
 
-long int TakeTime(FILE *f , char *st);/*{
+long int TakeTime(FILE *f , const char *st);/*{
   long int timen=getTicks(), delta=timen-globaltime;
   fprintf(f,"%5dmsec: %s\n",delta,st);
   globaltime=timen;
