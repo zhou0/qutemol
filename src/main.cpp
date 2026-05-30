@@ -208,7 +208,7 @@ void MyToolbar::OnDrag(wxMouseEvent &event){
 
    if ( event.Dragging() ){
      if (!(parent->IsMaximized())) {
-      CaptureMouse();
+      if (!HasCapture()) CaptureMouse();
       wxPoint cur=parent->GetPosition();
       int dx=mx-omx;
       int dy=my-omy;
@@ -220,16 +220,13 @@ void MyToolbar::OnDrag(wxMouseEvent &event){
      }
    } else {
      omx=mx; omy=my;
-     ReleaseMouse();
+     if (HasCapture()) ReleaseMouse();
   }
-}
-
-wxNotebook *notebook;
+  }
 
 void MyToolbar::UpdateGearsIcon(){
   UpdateGearsIcon( mol.DoingAO() );
 }
-
 void MyToolbar::UpdateGearsIcon(bool b){
   if (gearPresent==b) return;
   if (!b) gearS->Detach(gear); else gearS->Add(gear);
@@ -252,15 +249,15 @@ MyToolbar::MyToolbar(wxTopLevelWindow *_parent, wxWindowID id,
   parent=_parent;
 
   // let's build notebook
-  /*wxNotebook **/notebook = new wxNotebook(
+  this->notebook = new wxNotebook(
     this, id, pos, size,
     0,/*style/*|wxNO_FULL_REPAINT_ON_RESIZE|wxNB_TOP,*/
     name);
 
   for (int i=0; i<MyTab::Count(); i++) {
     //if (i==2)
-    notebook->AddPage(new MyTab(notebook,i), MyTab::Title(i), i==0 );
-      parent->SetBackgroundColour(notebook->GetBackgroundColour());
+    this->notebook->AddPage(new MyTab(this->notebook,i), MyTab::Title(i), i==0 );
+      parent->SetBackgroundColour(this->notebook->GetBackgroundColour());
   }
 
 #ifndef __DARWIN__
@@ -348,7 +345,7 @@ MyToolbar::MyToolbar(wxTopLevelWindow *_parent, wxWindowID id,
   wxSizer *globalsizer = new wxBoxSizer(wxVERTICAL);
   globalsizer->Add(topsizer, 0,  wxALL| wxEXPAND, 0);
   //globalsizer->Add(5, 5,       0,  wxALL, 0); // spacer
-  globalsizer->Add(notebook, 1,  wxALL|wxEXPAND, 0);
+  globalsizer->Add(this->notebook, 1,  wxALL|wxEXPAND, 0);
 
   SetSizer(globalsizer);
 
