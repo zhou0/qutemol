@@ -118,20 +118,28 @@ wxStopWatch sw;
 // defined in pngSave
 
 
-
 wxBitmap *LoadPngImage(wxString st){
+  wxArrayString paths;
 #ifdef __DARWIN__
-	wxString basePath = wxStandardPaths::Get().GetResourcesDir();
-  wxBitmap* res=new wxBitmap(basePath+_T("/image/")+st+_T(".png"),wxBITMAP_TYPE_PNG);
-#else
-  wxBitmap* res=new wxBitmap(_T("image/")+st+_T(".png"),wxBITMAP_TYPE_PNG);
-#endif  
-  //wxBitmap* res=new wxBitmap(st,wxBITMAP_TYPE_PNG_RESOURCE);
+  paths.Add(wxStandardPaths::Get().GetResourcesDir() + _T("/image/"));
+#endif
+  paths.Add(_T("image/"));
+  paths.Add(_T("./image/"));
+  paths.Add(_T("src/image/"));
+  paths.Add(_T("./src/image/"));
+  paths.Add(_T("../src/image/"));
 
-  // Marke all black pixels as transparent (useful for Windows NT only)
-  //res->SetMask(new wxMask(*res, wxColor(0,0,0)));
+  for (size_t i = 0; i < paths.GetCount(); i++) {
+    wxString fullPath = paths[i] + st + _T(".png");
+    if (wxFileExists(fullPath)) {
+      wxBitmap* res = new wxBitmap(fullPath, wxBITMAP_TYPE_PNG);
+      if (res->IsOk()) return res;
+      delete res;
+    }
+  }
 
-  return res;
+  wxLogWarning(_T("Could not load image %s from any path. Using placeholder."), st.c_str());
+  return new wxBitmap(1, 1);
 }
 
 void MyTab::SceneChanged(){
@@ -200,7 +208,7 @@ void MyToolbar::OnDrag(wxMouseEvent &event){
 
    if ( event.Dragging() ){
      if (!(parent->IsMaximized())) {
-      CaptureMouse();
+      if (!HasCapture()) CaptureMouse();
       wxPoint cur=parent->GetPosition();
       int dx=mx-omx;
       int dy=my-omy;
@@ -212,16 +220,13 @@ void MyToolbar::OnDrag(wxMouseEvent &event){
      }
    } else {
      omx=mx; omy=my;
-     ReleaseMouse();
+     if (HasCapture()) ReleaseMouse();
   }
-}
-
-wxNotebook *notebook;
+  }
 
 void MyToolbar::UpdateGearsIcon(){
   UpdateGearsIcon( mol.DoingAO() );
 }
-
 void MyToolbar::UpdateGearsIcon(bool b){
   if (gearPresent==b) return;
   if (!b) gearS->Detach(gear); else gearS->Add(gear);
@@ -244,15 +249,15 @@ MyToolbar::MyToolbar(wxTopLevelWindow *_parent, wxWindowID id,
   parent=_parent;
 
   // let's build notebook
-  /*wxNotebook **/notebook = new wxNotebook(
+  this->notebook = new wxNotebook(
     this, id, pos, size,
     0,/*style/*|wxNO_FULL_REPAINT_ON_RESIZE|wxNB_TOP,*/
     name);
 
   for (int i=0; i<MyTab::Count(); i++) {
     //if (i==2)
-    notebook->AddPage(new MyTab(notebook,i), MyTab::Title(i), i==0 );
-      parent->SetBackgroundColour(notebook->GetBackgroundColour());
+    this->notebook->AddPage(new MyTab(this->notebook,i), MyTab::Title(i), i==0 );
+      parent->SetBackgroundColour(this->notebook->GetBackgroundColour());
   }
 
 #ifndef __DARWIN__
@@ -340,7 +345,7 @@ MyToolbar::MyToolbar(wxTopLevelWindow *_parent, wxWindowID id,
   wxSizer *globalsizer = new wxBoxSizer(wxVERTICAL);
   globalsizer->Add(topsizer, 0,  wxALL| wxEXPAND, 0);
   //globalsizer->Add(5, 5,       0,  wxALL, 0); // spacer
-  globalsizer->Add(notebook, 1,  wxALL|wxEXPAND, 0);
+  globalsizer->Add(this->notebook, 1,  wxALL|wxEXPAND, 0);
 
   SetSizer(globalsizer);
 

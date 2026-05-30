@@ -9,6 +9,7 @@
 
 
 #ifndef _WX_MAIN_H_
+#include <wx/notebook.h>
 #define _WX_MAIN_H_
 
 
@@ -53,6 +54,7 @@ public:
         const wxString& name = wxT("ToolBar"));
   void OnDrag(wxMouseEvent &event);
   wxSizer *topsizer;
+  wxNotebook *notebook;
   
   void UpdateGearsIcon(bool b);
 
