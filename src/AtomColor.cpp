@@ -174,7 +174,7 @@ E2C["MT"]= /*[235,  0, 38]*/ 0xFF1493  	/* 0xEB0026			*/  	;
 }                                                          
 }
 
-static bool addAtomType(char* namei,  int unused, float radius, float radiusC, int r, int g, int b){
+static bool addAtomType(const char* namei,  int unused, float radius, float radiusC, int r, int g, int b){
   InitTables();
   
   // upperCase(name);
