@@ -160,7 +160,7 @@ Byte* GetSnapshot(int sx, int sy, bool alpha){
 
   // capture frame
   sx=sy=mainCanvas.GetHardRes();
-  Byte* res=new(Byte[sx*sy*4]);
+  Byte* res=new Byte[sx*sy*4];
   glReadPixels(0,0,sx,sy,alpha?GL_RGBA:GL_RGB,GL_UNSIGNED_BYTE,res);
 
 
@@ -798,10 +798,10 @@ void Mol::PrepareAOallAtOnce(){
   FILE *f = fopen("res.txt", "w");
   long int w=TakeTime(f,"sampled");
 
-  fprintf(f,"          %d views done in %d msec (%.2f views x sec), with %d atoms & %d sticks.\n",
-     DirV.size(), w,
-     DirV.size()*1000.0/w, this->atom.size(),
-     this->sticks?(this->bond.size()):0 );
+  fprintf(f,"          %zu views done in %ld msec (%.2f views x sec), with %zu atoms & %zu sticks.\n",
+     (size_t)DirV.size(), w,
+     DirV.size()*1000.0/w, (size_t)this->atom.size(),
+     (size_t)(this->sticks?(this->bond.size()):0) );
   fclose(f);
 
   AOready=true;
@@ -1084,7 +1084,7 @@ void StartTime();/*{
   startingtime=globaltime=getTicks();
 }*/
 
-long int TakeTime(FILE *f , char *st);/*{
+long int TakeTime(FILE *f , const char *st);/*{
   long int timen=getTicks(), delta=timen-globaltime;
   fprintf(f,"%5dmsec: %s\n",delta,st);
   globaltime=timen;
