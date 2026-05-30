@@ -156,7 +156,7 @@ void StartTime(){
   sw.Start();
 }
 
-long int TakeTime(FILE *f , char *st){
+long int TakeTime(FILE *f , const char *st){
   long int delta=sw.Time();
   fprintf(f,"%5ldmsec: %s\n",delta,st);
   //globaltime=timen;

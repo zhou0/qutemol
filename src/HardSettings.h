@@ -54,8 +54,8 @@ public:
   int GIF_6SIDES_PAUSE;
   
   void SetDefaults();
-  bool Load(char *fn);
-  bool Save(char *fn);
+  bool Load(const char *fn);
+  bool Save(const char *fn);
   bool OnStart(); // tries to load, on faliure setdefaults and saves
   HardSettings();
 private:

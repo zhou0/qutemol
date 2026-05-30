@@ -37,7 +37,7 @@ bool CgUtil::do_use_doubleshadow(){
   return ((P_double_shadows) && (can_use_doubleshadow()));
 }
 
-static char* FORMAT="void CgUtil::Set(int K){\nif (K==0){\n P_light_base = %f ;\n P_lighting = %f ;\n P_phong = %f ;\n P_phong_size = %f ;\n P_col_atoms_sat = %f ;\n P_col_atoms_bri = %f ;\n P_texture = %f ;\n P_border_inside = %f ;\n P_border_outside = %f ;\n P_depth_full = %f ;\n P_sem_effect = %d ;\n P_halo_size = %f ;\n P_halo_col = %f ;\n P_halo_str = %f ;\n P_halo_aware = %f ;\n P_fog = %f ;\n P_capping = %d ;\n P_shadowstrenght = %f ;\n P_bg_color_R = %f ;\n P_bg_color_G = %f ;\n P_bg_color_B = %f ;\n auto_normalize = %d ;\n P_double_shadows = %d ;\n P_border_fixed = %d ;\n}\n}";
+static const char* FORMAT="void CgUtil::Set(int K){\nif (K==0){\n P_light_base = %f ;\n P_lighting = %f ;\n P_phong = %f ;\n P_phong_size = %f ;\n P_col_atoms_sat = %f ;\n P_col_atoms_bri = %f ;\n P_texture = %f ;\n P_border_inside = %f ;\n P_border_outside = %f ;\n P_depth_full = %f ;\n P_sem_effect = %d ;\n P_halo_size = %f ;\n P_halo_col = %f ;\n P_halo_str = %f ;\n P_halo_aware = %f ;\n P_fog = %f ;\n P_capping = %d ;\n P_shadowstrenght = %f ;\n P_bg_color_R = %f ;\n P_bg_color_G = %f ;\n P_bg_color_B = %f ;\n auto_normalize = %d ;\n P_double_shadows = %d ;\n P_border_fixed = %d ;\n}\n}";
 
 bool CgUtil::Load(const char* filename){
   FILE *f=fopen(filename, "rt");

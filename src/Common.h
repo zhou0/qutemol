@@ -77,7 +77,7 @@ extern CgUtil shadowSettingsAcc;
 extern  float background;
 
 void StartTime();
-long int TakeTime(FILE *f, char *st);
+long int TakeTime(FILE *f, const char *st);
 long int TakeTotalTime();
 void  Cycle(  float &c, float min, float max, float step);
 
