@@ -20,7 +20,7 @@ bool UpdateProgress(int i){
   return res;
 }
 
-void StartProgress(char* str, int N){
+void StartProgress(const char* str, int N){
   EndProgress();
   wxString st; st.Printf("QuteMol: %s...",str);
   globalProgress= new wxProgressDialog(

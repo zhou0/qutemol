@@ -60,7 +60,7 @@ void HardSettings::SetDefaults(){
 
 
 
-static char* names[NNAMES]={
+static const char* names[NNAMES]={
   "TSIZE",
   "MAX_TSIZE",
   "N_VIEW_DIR",
@@ -131,7 +131,7 @@ HardSettings::HardSettings(){
 }
 
 
-static char* comments[NNAMES]={
+static const char* comments[NNAMES]={
   "favoured texture size for molecule",
   "maximal texture size (used when molecule too large for TSIZE)",
   "number of view directions ussed in AO computation",
@@ -167,7 +167,7 @@ static char* comments[NNAMES]={
 
 
 
-bool HardSettings::Load(char *fn){
+bool HardSettings::Load(const char *fn){
   FILE *f=fopen(fn,"rt");
   
   bool present[NNAMES];
@@ -206,7 +206,7 @@ bool HardSettings::Load(char *fn){
   return true;
 }
 
-bool HardSettings::Save(char *fn){
+bool HardSettings::Save(const char *fn){
   FILE *f=fopen(fn,"wt");
   
   static HardSettings defaults;
